@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>El regalo de Sofi 🎁</title>
+  <meta name="description" content="Una aventura interactiva especial para Sofi por su Confirmación." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script>
+    // Evita el parpadeo del modal si la aventura ya inició o se regresa de un juego
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var isRestart = params.has('inicio') || params.has('reset');
+      if (!isRestart && (sessionStorage.getItem('sofi-adventure-started') === 'true' || document.referrer.indexOf('/games/') !== -1 || params.has('from'))) {
+        document.documentElement.classList.add('adventure-started');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CANVAS: Fondo de partículas animadas
+  ═══════════════════════════════════════════════════════ -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL: Bienvenida (aparece la primera vez)
+  ═══════════════════════════════════════════════════════ -->
+  <div id="welcome-overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+    <div id="welcome-modal" class="modal">
+      <!-- Destellos decorativos del modal -->
+      <div class="modal-glow"></div>
+      <div class="modal-sparkles">
+        <span class="sparkle" style="--i:0"></span>
+        <span class="sparkle" style="--i:1"></span>
+        <span class="sparkle" style="--i:2"></span>
+        <span class="sparkle" style="--i:3"></span>
+        <span class="sparkle" style="--i:4"></span>
+      </div>
+
+      <!-- Contenido del mensaje de bienvenida -->
+      <div class="modal-content" id="modal-text-container">
+        <!-- El texto se inserta y anima desde JS para el efecto de escritura progresiva -->
+      </div>
+
+      <!-- Botón para comenzar -->
+      <button id="btn-start" class="btn-primary" aria-label="Comenzar la aventura">
+        <span class="btn-text">Comenzar aventura</span>
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PANTALLA PRINCIPAL
+  ═══════════════════════════════════════════════════════ -->
+  <main id="main-screen" class="main-screen hidden" aria-label="Pantalla principal de desafíos">
+
+    <!-- Encabezado -->
+    <header class="main-header">
+      <div class="header-eyebrow">✨ Una aventura especial para</div>
+      <h1 class="main-title">Los 3 desafíos<br><span class="title-name">de Sofi</span></h1>
+      <p class="main-subtitle">Superá los desafíos, conseguí las pistas y descubrí tu recompensa.</p>
+    </header>
+
+    <!-- Indicador de progreso global -->
+    <div class="progress-container" aria-label="Progreso de la aventura">
+      <div class="progress-track">
+        <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+      </div>
+      <div class="progress-label">
+        <span id="progress-text">0 de 3 completados</span>
+        <span class="progress-icon">🗝️</span>
+      </div>
+    </div>
+
+    <!-- Grid de tarjetas de juegos -->
+    <section class="games-grid" aria-label="Desafíos disponibles">
+
+      <!-- ── TARJETA 1: Murdoku ── -->
+      <article
+        id="card-murdoku"
+        class="game-card"
+        data-game="murdoku"
+        data-href="games/murdoku.html"
+        role="button"
+        tabindex="0"
+        aria-label="Desafío Murdoku"
+      >
+        <div class="card-glow"></div>
+        <div class="card-inner">
+          <div class="card-icon">🔢</div>
+          <div class="card-number">Desafío 1</div>
+          <h2 class="card-title">Murdoku</h2>
+          <p class="card-description">Un sudoku con un giro mortal. ¿Podés resolverlo?</p>
+
+          <div class="card-status">
+            <span class="status-dot"></span>
+            <span class="status-text">Pendiente</span>
+          </div>
+
+          <div class="card-actions">
+            <div class="btn-play-wrapper">
+              <span class="btn-play-label">Jugar</span>
+              <span class="btn-play-arrow">→</span>
+            </div>
+            <!-- El botón "Ver pista" se inyecta desde JS solo cuando el juego está completado -->
+          </div>
+        </div>
+      </article>
+
+      <!-- ── TARJETA 2: Crucigrama ── -->
+      <article
+        id="card-crucigrama"
+        class="game-card"
+        data-game="crucigrama"
+        data-href="games/crucigrama.html"
+        role="button"
+        tabindex="0"
+        aria-label="Desafío Crucigrama"
+      >
+        <div class="card-glow"></div>
+        <div class="card-inner">
+          <div class="card-icon">🎵</div>
+          <div class="card-number">Desafío 2</div>
+          <h2 class="card-title">Crucigrama Musical</h2>
+          <p class="card-description">Canciones, artistas y recuerdos. Encontrá las respuestas al ritmo de la música.</p>
+
+          <div class="card-status">
+            <span class="status-dot"></span>
+            <span class="status-text">Pendiente</span>
+          </div>
+
+          <div class="card-actions">
+            <div class="btn-play-wrapper">
+              <span class="btn-play-label">Jugar</span>
+              <span class="btn-play-arrow">→</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ── TARJETA 3: Tercer juego (por definir) ── -->
+      <article
+        id="card-tercerjuego"
+        class="game-card"
+        data-game="tercerjuego"
+        data-href="games/tercer-juego.html"
+        role="button"
+        tabindex="0"
+        aria-label="Tercer desafío misterioso"
+      >
+        <div class="card-glow"></div>
+        <div class="card-inner">
+          <div class="card-icon">❓</div>
+          <div class="card-number">Desafío 3</div>
+          <h2 class="card-title">???</h2>
+          <p class="card-description">El tercer misterio todavía no se revela... ¿te animás?</p>
+
+          <div class="card-status">
+            <span class="status-dot"></span>
+            <span class="status-text">Pendiente</span>
+          </div>
+
+          <div class="card-actions">
+            <div class="btn-play-wrapper">
+              <span class="btn-play-label">Jugar</span>
+              <span class="btn-play-arrow">→</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- Sección de recompensa final (oculta hasta completar los 3 juegos) -->
+    <section id="reward-section" class="reward-section hidden" aria-live="polite" aria-label="Recompensa final">
+      <div class="reward-inner">
+        <div class="reward-glow"></div>
+        <div class="reward-icon">🎁</div>
+        <h2 class="reward-title">¡Lo lograste, Sofi!</h2>
+        <p class="reward-subtitle">Superaste los tres desafíos. Tu recompensa te espera...</p>
+        <!-- ═══════════════════════════════════════════════════════
+             RECOMPENSA FINAL: Agregar contenido aquí en etapa 2
+             Ejemplo: un botón que lleve a /reward.html, un video,
+             un mensaje especial, etc.
+        ═══════════════════════════════════════════════════════ -->
+        <div id="reward-content" class="reward-content">
+          <!-- Placeholder: reemplazar con el contenido real de la recompensa -->
+          <p class="reward-placeholder">[ La recompensa se revelará aquí 🔐 ]</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pie de página decorativo -->
+    <footer class="main-footer">
+      <div class="footer-links">
+        <button id="btn-reopen-welcome" class="footer-btn" type="button" aria-label="Ver mensaje de bienvenida nuevamente">
+          💌 Ver mensaje inicial
+        </button>
+        <span class="footer-sep">•</span>
+        <button id="btn-reset-adventure" class="footer-btn footer-btn-reset" type="button" aria-label="Reiniciar la aventura desde el inicio">
+          ↺ Reiniciar aventura
+        </button>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL GENÉRICO: Para mostrar las pistas
+  ═══════════════════════════════════════════════════════ -->
+  <div id="clue-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="clue-title">
+    <div id="clue-modal" class="modal clue-modal">
+      <div class="modal-glow"></div>
+      <button id="clue-close" class="clue-close-btn" aria-label="Cerrar pista">✕</button>
+      <div class="clue-header">
+        <div class="clue-icon">🔍</div>
+        <h2 id="clue-title" class="clue-title">Pista</h2>
+      </div>
+      <div id="clue-body" class="clue-body">
+        <!-- El contenido de la pista se inyecta dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

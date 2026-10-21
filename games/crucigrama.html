@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>El Crucigrama Musical 🎵 – Desafío 2</title>
+  <meta name="description" content="Crucigrama musical interactivo personalizado para Sofi. Canciones, artistas, recuerdos y ritmo." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Hojas de estilo del proyecto -->
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/game.css" />
+  <link rel="stylesheet" href="../css/crucigrama.css" />
+</head>
+<body class="game-page">
+
+  <!-- Fondo interactivo con notas musicales y partículas estelares -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Canvas especial para confeti de victoria -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="game-wrapper">
+    <!-- ── NAVEGACIÓN SUPERIOR ── -->
+    <nav class="game-nav" aria-label="Navegación del juego">
+      <a href="../index.html?from=game" class="btn-back" id="btn-back-crucigrama">
+        ← Volver a los desafíos
+      </a>
+      <span class="game-nav-title">🔤 Desafío 2: Crucigrama Musical</span>
+    </nav>
+
+    <!-- ── CONTENEDOR PRINCIPAL DEL JUEGO ── -->
+    <main class="crucigrama-container">
+
+      <!-- ═══════════════════════════════════════════════════════
+           PANTALLA 1: BIENVENIDA
+      ═══════════════════════════════════════════════════════ -->
+      <section id="screen-welcome" class="crucigrama-screen welcome-hero" aria-label="Pantalla de bienvenida">
+        <div class="music-badge">
+          <span>🎵</span>
+          <span>Desafío 2 • Edición Musical</span>
+        </div>
+
+        <h1 class="welcome-title">
+          🎵 EL CRUCIGRAMA MUSICAL
+        </h1>
+
+        <p class="welcome-subtitle">
+          Un crucigrama personalizado para Sofi, lleno de canciones, recuerdos y mucho ritmo.
+        </p>
+
+        <!-- Ilustración de vinilo giratorio y notas flotantes -->
+        <div class="music-vinyl-art">
+          <div class="vinyl-disc">
+            <div class="vinyl-center">🎶</div>
+          </div>
+          <div class="floating-notes-container">
+            <span class="floating-note note-1">♪</span>
+            <span class="floating-note note-2">♫</span>
+            <span class="floating-note note-3">♬</span>
+            <span class="floating-note note-4">♩</span>
+          </div>
+        </div>
+
+        <!-- Botones de bienvenida -->
+        <div class="welcome-actions">
+          <button id="btn-start-game" class="btn-start-primary" type="button">
+            <span>🎶</span>
+            <span>COMENZAR</span>
+          </button>
+
+          <button id="btn-open-instructions" class="btn-instructions-secondary" type="button">
+            <span>📖</span>
+            <span>INSTRUCCIONES</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           PANTALLA 2: GRILLA Y PISTAS DEL CRUCIGRAMA
+      ═══════════════════════════════════════════════════════ -->
+      <section id="screen-board" class="crucigrama-screen hidden" aria-label="Tablero del crucigrama">
+        <header class="board-header">
+          <div class="board-title-row">
+            <h2 class="board-title">🎵 El Crucigrama Musical</h2>
+          </div>
+
+          <!-- Barra de controles y progreso rápido -->
+          <div class="board-controls-bar">
+            <div class="progress-pill">
+              <span>✍️</span>
+              <span id="board-progress-text">0 de 99 letras</span>
+            </div>
+
+            <div class="progress-pill">
+              <span>🎧</span>
+              <span id="board-words-progress">0 / 15 palabras</span>
+            </div>
+
+            <button id="btn-sound-toggle" class="board-quick-btn" type="button" title="Activar / Desactivar sonido">
+              🔊 Sonido
+            </button>
+
+            <button id="btn-rules-quick" class="board-quick-btn" type="button">
+              📖 Reglas
+            </button>
+          </div>
+        </header>
+
+        <!-- Barra de pista activa destacada -->
+        <div class="active-clue-banner" id="active-clue-banner" aria-live="polite">
+          <div class="active-clue-badge" id="active-clue-badge">3 Horizontal</div>
+          <div class="active-clue-text" id="active-clue-text">Tu artista favorito (dos palabras).</div>
+          <div class="active-clue-length" id="active-clue-length">10 letras</div>
+        </div>
+
+        <!-- Banner de advertencias / errores -->
+        <div id="board-warning-banner" class="crucigrama-warning-banner hidden" role="alert" aria-live="polite"></div>
+
+        <!-- Contenedor con scroll táctil suave para la grilla clásica -->
+        <div class="grid-scroll-wrapper">
+          <div id="crucigrama-grid" class="crucigrama-grid" role="grid" aria-label="Grilla interactiva de 20 por 19">
+            <!-- Celdas inyectadas dinámicamente desde crucigrama.js -->
+          </div>
+        </div>
+
+        <!-- Botones de acción del juego -->
+        <div class="board-actions">
+          <button id="btn-check-solution" class="btn-check-solution" type="button">
+            <span>🔍</span>
+            <span>COMPROBAR CRUCIGRAMA</span>
+          </button>
+
+          <button id="btn-reset-board" class="btn-text-link" type="button">
+            ↺ Limpiar mis respuestas
+          </button>
+        </div>
+
+        <!-- Sección de Pistas: Horizontales y Verticales -->
+        <section class="clues-section" aria-label="Lista de pistas del crucigrama">
+          <!-- Columna Horizontales -->
+          <div class="clues-column">
+            <h3 class="clues-column-title">
+              <span>➡️ Horizontales</span>
+              <span class="count-pill">8 palabras</span>
+            </h3>
+            <div id="clues-list-across" class="clues-list">
+              <!-- Inyectado desde JS -->
+            </div>
+          </div>
+
+          <!-- Columna Verticales -->
+          <div class="clues-column">
+            <h3 class="clues-column-title">
+              <span>⬇️ Verticales</span>
+              <span class="count-pill">7 palabras</span>
+            </h3>
+            <div id="clues-list-down" class="clues-list">
+              <!-- Inyectado desde JS -->
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           PANTALLA 3: VICTORIA (RESULTADO FINAL)
+      ═══════════════════════════════════════════════════════ -->
+      <section id="screen-victory" class="crucigrama-screen hidden" aria-label="Pantalla de victoria y recompensa">
+        <article class="victory-card">
+          <div class="victory-badge">
+            <span>🎉</span>
+            <span>DESAFÍO COMPLETADO</span>
+          </div>
+
+          <h2 class="victory-title">¡Crucigrama Musical Resuelto!</h2>
+
+          <!-- Disco de oro animado -->
+          <div class="victory-disc-area">
+            <div class="victory-disc">🏆</div>
+          </div>
+
+          <div class="victory-narrative">
+            <h3 class="victory-headline">¡Increíble memoria y oído musical, Sofi! 🎶</h3>
+            <p class="victory-detail">
+              Descubriste todas las canciones de las previas, los viajes en auto, la bachata y nuestros artistas favoritos.
+            </p>
+          </div>
+
+          <!-- Botón para abrir la recompensa -->
+          <div class="reward-unlock-wrapper">
+            <button id="btn-reward-unlock" class="btn-reward-unlock" type="button">
+              <span>🎁</span>
+              <span>ABRIR RECOMPENSA</span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL 1: INSTRUCCIONES DEL JUEGO
+  ═══════════════════════════════════════════════════════ -->
+  <div id="instructions-modal" class="picker-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="instructions-title">
+    <div class="picker-card">
+      <div class="picker-header">
+        <h3 id="instructions-title" class="picker-title">📖 ¿CÓMO SE JUEGA?</h3>
+        <button id="btn-close-instructions-x" class="picker-close-btn" aria-label="Cerrar instrucciones">✕</button>
+      </div>
+
+      <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-primary); display: flex; flex-direction: column; gap: 0.9rem;">
+        <div style="background: hsla(255, 60%, 70%, 0.08); padding: 0.9rem 1.1rem; border-radius: 12px; border-left: 3px solid var(--accent-purple);">
+          <p style="margin-bottom: 0.4rem;">Este es un crucigrama musical.</p>
+          <p style="margin-bottom: 0.4rem;">Cada número corresponde a una palabra que tenés que descubrir a partir de una pista.</p>
+          <p style="margin-bottom: 0.4rem;">Las palabras pueden estar en horizontal o vertical y se cruzan entre sí.</p>
+          <p>Completá todas las palabras y después comprobá tus respuestas.</p>
+        </div>
+
+        <div>
+          <strong style="color: var(--accent-gold); font-size: 1rem;">Reglas:</strong>
+          <ol style="margin: 0.6rem 0 0 1.2rem; display: flex; flex-direction: column; gap: 0.45rem; color: var(--text-secondary); line-height: 1.5;">
+            <li>Cada casillero blanco corresponde a una letra.</li>
+            <li>Los casilleros negros separan las palabras.</li>
+            <li>Los números indican dónde comienza cada palabra.</li>
+            <li>Las palabras pueden ser horizontales o verticales.</li>
+            <li>Las respuestas se escriben sin espacios ni tildes.</li>
+            <li>Podés seleccionar una pista para encontrar rápidamente dónde escribir.</li>
+            <li>Cuando hayas completado todas las palabras aparecerá el botón para comprobar el crucigrama.</li>
+            <li>Si hay errores, las respuestas incorrectas se marcarán visualmente para que puedas corregirlas.</li>
+            <li>Cuando todas las palabras sean correctas, se desbloqueará la recompensa.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: center; margin-top: 0.5rem;">
+        <button id="btn-close-instructions" class="btn-start-primary" style="padding: 0.75rem 2rem; font-size: 0.95rem;" type="button">
+          ← VOLVER
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL 2: RECOMPENSA DESBLOQUEADA
+  ═══════════════════════════════════════════════════════ -->
+  <div id="reward-modal" class="picker-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="reward-modal-title">
+    <div class="reward-modal-card">
+      <div class="reward-icon-huge">🎁</div>
+
+      <h3 id="reward-modal-title" class="reward-celebration-title">
+        🎉 ¡Felicitaciones, Sofi!
+      </h3>
+
+      <div class="reward-card-inner">
+        <div class="reward-card-heading">🎁 Tu recompensa te está esperando...</div>
+        <p class="reward-card-text">
+          ¡Excelente oído musical, Sofi! Demostraste que te acordás de cada canción, de los viajes en auto, de las previas y de nuestra música favorita.
+        </p>
+      </div>
+
+      <div class="reward-clue-badge">
+        <strong>Pista desbloqueada para la aventura:</strong><br />
+        « Tito dejó una nota musical: ¡El regalo está escondido al ritmo de sus canciones favoritas! 🎵✨ »
+      </div>
+
+      <button id="btn-return-adventure" class="btn-return-adventure" type="button">
+        ← Volver a la aventura con el desafío completado
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts del juego -->
+  <script src="../js/gamesBridge.js"></script>
+  <script src="crucigramaConfig.js"></script>
+  <script src="crucigrama.js"></script>
+</body>
+</html>

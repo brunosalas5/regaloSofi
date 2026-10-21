@@ -1,0 +1,965 @@
+/* ═══════════════════════════════════════════════════════════════
+   style.css  –  El regalo de Sofi
+   Estética: aventura / misterio / elegancia
+   Paleta: deep navy + violeta / magenta + dorado suave
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── 0. RESET & BASE ─────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Paleta principal */
+  --bg-deep:        hsl(232, 32%, 7%);
+  --bg-mid:         hsl(236, 28%, 11%);
+  --bg-card:        hsl(236, 24%, 14%);
+  --bg-card-hover:  hsl(248, 28%, 18%);
+
+  /* Acentos */
+  --accent-purple:  hsl(270, 70%, 65%);
+  --accent-violet:  hsl(255, 75%, 70%);
+  --accent-pink:    hsl(320, 72%, 65%);
+  --accent-gold:    hsl(42,  88%, 62%);
+  --accent-teal:    hsl(180, 60%, 55%);
+
+  /* Estado completado */
+  --green-glow:     hsl(145, 65%, 45%);
+  --green-soft:     hsl(145, 50%, 30%);
+  --green-text:     hsl(145, 60%, 70%);
+
+  /* Texto */
+  --text-primary:   hsl(230, 20%, 92%);
+  --text-secondary: hsl(230, 15%, 65%);
+  --text-muted:     hsl(230, 12%, 45%);
+
+  /* Bordes y sombras */
+  --border-subtle:  hsla(255, 60%, 70%, 0.12);
+  --border-active:  hsla(255, 70%, 70%, 0.45);
+  --shadow-card:    0 20px 60px hsla(232, 50%, 4%, 0.6);
+  --shadow-glow:    0 0 40px hsla(270, 70%, 65%, 0.2);
+
+  /* Tipografía */
+  --font-body:      'Outfit', system-ui, sans-serif;
+  --font-serif:     'Crimson Pro', Georgia, serif;
+
+  /* Transiciones */
+  --ease-smooth:    cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce:    cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Layout */
+  --max-width: 1100px;
+  --card-radius: 20px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ─── 1. CANVAS DE FONDO ───────────────────────────────────── */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ─── 2. OVERLAY (fondo de modales) ──────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: hsla(232, 40%, 4%, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 1;
+  transition: opacity 0.5s var(--ease-smooth);
+}
+
+.overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Si la aventura ya inició, ocultar de inmediato el overlay y mostrar la pantalla principal */
+html.adventure-started #welcome-overlay {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+html.adventure-started #main-screen {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* ─── 3. MODAL DE BIENVENIDA ─────────────────────────────── */
+.modal {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 2.5rem 2.8rem 2.2rem;
+  max-width: 540px;
+  width: 100%;
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+  overflow: hidden;
+
+  /* Animación de entrada */
+  animation: modalIn 0.7s var(--ease-out-expo) forwards;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Halo de luz en el modal */
+.modal-glow {
+  position: absolute;
+  inset: -60px;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    hsla(270, 70%, 55%, 0.18) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Destellos decorativos */
+.modal-sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent-gold);
+  opacity: 0;
+  animation: sparkleFloat 4s var(--ease-smooth) infinite;
+  animation-delay: calc(var(--i) * 0.7s);
+}
+
+.sparkle:nth-child(1) { top: 15%; left: 10%; }
+.sparkle:nth-child(2) { top: 10%; right: 15%; width: 6px; height: 6px; background: var(--accent-purple); }
+.sparkle:nth-child(3) { bottom: 25%; right: 8%; }
+.sparkle:nth-child(4) { bottom: 15%; left: 20%; background: var(--accent-pink); }
+.sparkle:nth-child(5) { top: 40%; right: 5%; width: 3px; height: 3px; background: var(--accent-teal); }
+
+@keyframes sparkleFloat {
+  0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
+  30%, 70% { opacity: 1; transform: translateY(-8px) scale(1); }
+}
+
+/* Contenido del modal */
+.modal-content {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 2rem;
+}
+
+/* Líneas del mensaje de bienvenida — añadidas desde JS */
+.modal-line {
+  display: block;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
+  margin-bottom: 0.5rem;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.modal-line.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.modal-line.greeting {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.2rem;
+}
+
+.modal-line.italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.modal-line.highlight {
+  color: var(--accent-gold);
+  font-weight: 600;
+}
+
+.modal-line.big {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 0.6rem;
+}
+
+.modal-line.spacer {
+  margin-bottom: 0.9rem;
+}
+
+/* ─── 4. BOTÓN PRIMARIO ─────────────────────────────────── */
+.btn-primary {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.8rem;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 24px hsla(270, 70%, 60%, 0.4);
+  transition: transform 0.25s var(--ease-bounce),
+              box-shadow 0.25s var(--ease-smooth),
+              opacity 0.25s;
+  opacity: 0;
+  /* Se hace visible desde JS cuando el texto terminó de aparecer */
+}
+
+.btn-primary.visible {
+  opacity: 1;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 8px 32px hsla(270, 70%, 60%, 0.55);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-arrow {
+  display: inline-block;
+  transition: transform 0.25s var(--ease-bounce);
+}
+
+.btn-primary:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* ─── 5. PANTALLA PRINCIPAL ──────────────────────────────── */
+.main-screen {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1.5rem 2rem;
+  gap: 2.5rem;
+  transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth);
+}
+
+.main-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Animación de entrada de la pantalla principal */
+.main-screen.entering {
+  animation: screenEnter 0.8s var(--ease-out-expo) forwards;
+}
+
+@keyframes screenEnter {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── 6. HEADER ─────────────────────────────────────────── */
+.main-header {
+  text-align: center;
+  max-width: 600px;
+}
+
+.header-eyebrow {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin-bottom: 0.8rem;
+  opacity: 0.85;
+}
+
+.main-title {
+  font-size: clamp(2.4rem, 6vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent-purple) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.title-name {
+  background: linear-gradient(135deg, var(--accent-pink), var(--accent-gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.main-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 420px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ─── 7. BARRA DE PROGRESO ─────────────────────────────── */
+.progress-container {
+  width: 100%;
+  max-width: 480px;
+}
+
+.progress-track {
+  height: 6px;
+  background: hsla(255, 40%, 70%, 0.12);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+  transition: width 0.8s var(--ease-out-expo);
+  box-shadow: 0 0 12px hsla(270, 70%, 65%, 0.5);
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ─── 8. GRID DE TARJETAS ──────────────────────────────── */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: var(--max-width);
+}
+
+/* ─── 9. TARJETA DE JUEGO ──────────────────────────────── */
+.game-card {
+  position: relative;
+  border-radius: var(--card-radius);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    transform 0.35s var(--ease-bounce),
+    box-shadow 0.35s var(--ease-smooth),
+    border-color 0.35s var(--ease-smooth);
+  box-shadow: var(--shadow-card);
+  /* Animación de entrada escalonada (aplicada desde JS) */
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.game-card.card-visible {
+  animation: cardEnter 0.6s var(--ease-out-expo) forwards;
+}
+
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Halo de brillo en hover */
+.card-glow {
+  position: absolute;
+  inset: -2px;
+  border-radius: calc(var(--card-radius) + 2px);
+  background: conic-gradient(
+    from var(--angle, 0deg),
+    transparent 0deg,
+    hsla(270, 70%, 65%, 0.35) 60deg,
+    transparent 120deg
+  );
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-smooth);
+  pointer-events: none;
+  z-index: 0;
+  /* Animación rotativa del halo */
+  animation: rotateBorder 4s linear infinite paused;
+}
+
+.game-card:hover .card-glow {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes rotateBorder {
+  to { --angle: 360deg; }
+}
+
+/* Contenido interno de la tarjeta */
+.card-inner {
+  position: relative;
+  z-index: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: var(--bg-card);
+  border-radius: var(--card-radius);
+  margin: 1px; /* Separa del borde exterior para que se vea el halo */
+  min-height: 280px;
+  transition: background 0.35s var(--ease-smooth);
+}
+
+.game-card:hover .card-inner {
+  background: var(--bg-card-hover);
+}
+
+.game-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-card), 0 24px 60px hsla(270, 70%, 60%, 0.2);
+  border-color: var(--border-active);
+}
+
+.game-card:focus-visible {
+  outline: 2px solid var(--accent-purple);
+  outline-offset: 4px;
+}
+
+/* Ícono de la tarjeta */
+.card-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+  transition: transform 0.35s var(--ease-bounce);
+}
+
+.game-card:hover .card-icon {
+  transform: scale(1.15) rotate(-5deg);
+}
+
+/* Número de desafío */
+.card-number {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Título de la tarjeta */
+.card-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+  transition: color 0.3s;
+}
+
+/* Descripción */
+.card-description {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  flex-grow: 1;
+}
+
+/* Estado de la tarjeta */
+.card-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: background 0.4s, box-shadow 0.4s;
+}
+
+.status-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: color 0.4s;
+}
+
+/* Acciones de la tarjeta */
+.card-actions {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* Botón de jugar (inline, en la tarjeta) */
+.btn-play-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 50px;
+  background: hsla(255, 60%, 70%, 0.1);
+  border: 1px solid hsla(255, 60%, 70%, 0.2);
+  color: var(--accent-violet);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition:
+    background 0.25s,
+    border-color 0.25s,
+    transform 0.25s var(--ease-bounce);
+  width: fit-content;
+}
+
+.game-card:hover .btn-play-wrapper {
+  background: hsla(255, 60%, 70%, 0.2);
+  border-color: hsla(255, 70%, 70%, 0.45);
+  transform: translateX(4px);
+}
+
+.btn-play-arrow {
+  transition: transform 0.25s var(--ease-bounce);
+}
+
+.game-card:hover .btn-play-arrow {
+  transform: translateX(3px);
+}
+
+/* ─── 10. ESTADO COMPLETADO ─────────────────────────────── */
+.game-card.completed {
+  border-color: hsla(145, 60%, 45%, 0.3);
+}
+
+.game-card.completed .card-glow {
+  background: conic-gradient(
+    from var(--angle, 0deg),
+    transparent 0deg,
+    hsla(145, 65%, 45%, 0.4) 60deg,
+    transparent 120deg
+  );
+}
+
+.game-card.completed .card-title {
+  color: var(--green-text);
+}
+
+.game-card.completed .status-dot {
+  background: var(--green-glow);
+  box-shadow: 0 0 8px var(--green-glow);
+  animation: pulseDot 2.5s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { box-shadow: 0 0 8px var(--green-glow); }
+  50%       { box-shadow: 0 0 16px var(--green-glow); }
+}
+
+.game-card.completed .status-text {
+  color: var(--green-text);
+}
+
+.game-card.completed .card-number {
+  color: hsla(145, 55%, 55%, 0.7);
+}
+
+/* Checkmark que aparece en tarjetas completadas */
+.card-check {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--green-soft);
+  border: 1.5px solid var(--green-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: var(--green-text);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.4s var(--ease-smooth), transform 0.5s var(--ease-bounce);
+  z-index: 3;
+}
+
+.game-card.completed .card-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Animación especial cuando se completa un juego en tiempo real */
+@keyframes completedPop {
+  0%   { transform: scale(0.5); opacity: 0; }
+  60%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.game-card.just-completed .card-check {
+  animation: completedPop 0.6s var(--ease-bounce) forwards;
+}
+
+/* Pulso de color cuando la tarjeta se completa */
+@keyframes cardCompletePulse {
+  0%   { box-shadow: 0 0 0 0 hsla(145, 65%, 45%, 0); }
+  40%  { box-shadow: 0 0 0 20px hsla(145, 65%, 45%, 0.25); }
+  100% { box-shadow: 0 0 0 40px hsla(145, 65%, 45%, 0); }
+}
+
+.game-card.just-completed {
+  animation: cardCompletePulse 0.8s var(--ease-smooth) forwards;
+}
+
+/* ─── 11. BOTÓN VER PISTA ──────────────────────────────── */
+.btn-clue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 50px;
+  background: hsla(145, 50%, 30%, 0.25);
+  border: 1px solid hsla(145, 60%, 45%, 0.4);
+  color: var(--green-text);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: fit-content;
+  /* Animación de aparición */
+  opacity: 0;
+  transform: translateY(6px);
+  animation: clueButtonIn 0.5s var(--ease-out-expo) 0.2s forwards;
+  transition:
+    background 0.25s,
+    border-color 0.25s,
+    box-shadow 0.25s,
+    transform 0.25s var(--ease-bounce);
+}
+
+@keyframes clueButtonIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.btn-clue:hover {
+  background: hsla(145, 50%, 30%, 0.45);
+  border-color: hsla(145, 60%, 45%, 0.7);
+  box-shadow: 0 4px 16px hsla(145, 60%, 45%, 0.25);
+  transform: translateY(-2px);
+}
+
+.btn-clue:active {
+  transform: translateY(0);
+}
+
+.btn-clue-icon {
+  font-size: 0.9rem;
+  transition: transform 0.3s var(--ease-bounce);
+}
+
+.btn-clue:hover .btn-clue-icon {
+  transform: rotate(12deg) scale(1.1);
+}
+
+/* ─── 12. MODAL DE PISTAS ──────────────────────────────── */
+.clue-modal {
+  max-width: 420px;
+  padding: 2rem 2.2rem;
+}
+
+.clue-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: hsla(255, 30%, 50%, 0.15);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, transform 0.2s var(--ease-bounce);
+  z-index: 5;
+}
+
+.clue-close-btn:hover {
+  background: hsla(255, 30%, 50%, 0.3);
+  color: var(--text-primary);
+  transform: rotate(90deg) scale(1.1);
+}
+
+.clue-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.clue-icon {
+  font-size: 1.6rem;
+}
+
+.clue-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.clue-body {
+  position: relative;
+  z-index: 2;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-family: var(--font-serif);
+  font-style: italic;
+  background: hsla(255, 30%, 50%, 0.06);
+  border-radius: 12px;
+  padding: 1.2rem 1.4rem;
+  border-left: 3px solid var(--accent-purple);
+}
+
+/* ─── 13. SECCIÓN DE RECOMPENSA FINAL ─────────────────── */
+.reward-section {
+  width: 100%;
+  max-width: 600px;
+  transition: opacity 0.8s var(--ease-smooth), transform 0.8s var(--ease-out-expo);
+}
+
+.reward-section.hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  display: none;
+}
+
+.reward-section.revealing {
+  display: block;
+  animation: rewardReveal 1s var(--ease-out-expo) forwards;
+}
+
+@keyframes rewardReveal {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.reward-inner {
+  position: relative;
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid hsla(42, 80%, 60%, 0.3);
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  overflow: hidden;
+  box-shadow: 0 24px 64px hsla(232, 50%, 4%, 0.6), 0 0 60px hsla(42, 80%, 60%, 0.12);
+}
+
+.reward-glow {
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    hsla(42, 80%, 60%, 0.15) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+.reward-icon {
+  font-size: 3.5rem;
+  animation: rewardBounce 2s var(--ease-bounce) infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes rewardBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+.reward-title {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.6rem;
+}
+
+.reward-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.reward-content {
+  position: relative;
+  z-index: 1;
+}
+
+.reward-placeholder {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  border: 1px dashed hsla(255, 30%, 60%, 0.2);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+/* ─── 14. FOOTER ─────────────────────────────────────── */
+.main-footer {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footer-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s, transform 0.2s;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: hsla(230, 12%, 45%, 0.4);
+}
+
+.footer-btn:hover {
+  color: var(--text-secondary);
+  background: hsla(255, 30%, 50%, 0.1);
+  text-decoration-color: var(--accent-purple);
+  transform: translateY(-1px);
+}
+
+.footer-btn-reset:hover {
+  color: hsl(0, 70%, 75%);
+  text-decoration-color: hsl(0, 70%, 65%);
+}
+
+.footer-sep {
+  color: var(--text-muted);
+  opacity: 0.5;
+  font-size: 0.7rem;
+}
+
+/* ─── 15. RESPONSIVO ─────────────────────────────────── */
+@media (max-width: 600px) {
+  .main-screen {
+    padding: 2rem 1rem 2rem;
+    gap: 2rem;
+  }
+
+  .modal {
+    padding: 2rem 1.6rem 1.8rem;
+  }
+
+  .games-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-inner {
+    padding: 1.5rem;
+    min-height: unset;
+  }
+
+  .main-title {
+    font-size: 2.2rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .games-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ─── 16. UTILIDADES ─────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}

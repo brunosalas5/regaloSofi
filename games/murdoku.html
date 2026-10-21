@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Murdoku: El Regalo Desaparecido 🎁🕵️</title>
+  <meta name="description" content="Juego interactivo tipo Sudoku de detectives para Sofi. Descubrí quién escondió el regalo." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <!-- Hojas de estilo -->
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/game.css" />
+  <link rel="stylesheet" href="../css/murdoku.css" />
+
+  <script>
+    // Manejo inmediato y robusto de carga de fotografías
+    window.handlePhotoError = function (img) {
+      if (!img) return;
+      var filename = img.getAttribute('data-filename') || (img.src ? img.src.split('/').pop().split('?')[0] : '');
+      if (!img.dataset.triedRoot && filename) {
+        img.dataset.triedRoot = 'true';
+        img.src = '../suspects/' + filename;
+        return;
+      }
+      if (!img.dataset.triedLocal && filename) {
+        img.dataset.triedLocal = 'true';
+        img.src = 'suspects/' + filename;
+        return;
+      }
+      img.style.display = 'none';
+      var fallback = img.parentElement ? img.parentElement.querySelector('.suspect-fallback-avatar, .cell-fallback-avatar, .culprit-fallback') : null;
+      if (fallback) fallback.style.display = 'flex';
+    };
+
+    window.handlePhotoSuccess = function (img) {
+      if (!img) return;
+      img.style.display = 'block';
+      var fallback = img.parentElement ? img.parentElement.querySelector('.suspect-fallback-avatar, .cell-fallback-avatar, .culprit-fallback') : null;
+      if (fallback) fallback.style.display = 'none';
+    };
+  </script>
+</head>
+<body class="game-page">
+
+  <!-- Fondo interactivo con partículas estelares -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Canvas especial para confeti de victoria -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="game-wrapper">
+    <!-- ── NAVEGACIÓN SUPERIOR ── -->
+    <nav class="game-nav" aria-label="Navegación del juego">
+      <a href="../index.html?from=game" class="btn-back" id="btn-back-murdoku">
+        ← Volver a los desafíos
+      </a>
+      <span class="game-nav-title">🔢 Desafío 1: Murdoku</span>
+    </nav>
+
+    <!-- ── CONTENEDOR PRINCIPAL DE MURDOKU ── -->
+    <main class="murdoku-container">
+
+      <!-- ═══════════════════════════════════════════════════════
+           PANTALLA 1: BIENVENIDA
+      ═══════════════════════════════════════════════════════ -->
+      <section id="screen-welcome" class="murdoku-screen welcome-hero" aria-label="Pantalla de bienvenida">
+        <div class="detective-badge">
+          <span>🔎</span>
+          <span>Desafío 1 • Investigación Detectivesca</span>
+        </div>
+
+        <h1 class="welcome-title">
+          🎁 EL MURDOKU DEL REGALO DESAPARECIDO
+        </h1>
+
+        <p class="welcome-subtitle">
+          ¿Quién escondió el regalo de Sofi?
+        </p>
+
+        <!-- Galería de los 4 sospechosos -->
+        <div class="suspects-preview">
+          <span class="suspects-preview-label">Sospechosos del caso</span>
+          <div class="suspects-cards-row">
+            <!-- Kike -->
+            <div class="suspect-preview-card" style="--card-accent: #38bdf8;">
+              <div class="avatar-wrapper">
+                <img
+                  src="suspects/kike.png"
+                  data-filename="kike.png"
+                  alt="Kike"
+                  class="suspect-photo"
+                  onload="handlePhotoSuccess(this)"
+                  onerror="handlePhotoError(this)"
+                />
+                <div class="suspect-fallback-avatar" style="display:none;">K</div>
+              </div>
+              <span class="suspect-preview-name">Kike</span>
+            </div>
+
+            <!-- Brenda -->
+            <div class="suspect-preview-card" style="--card-accent: #ec4899;">
+              <div class="avatar-wrapper">
+                <img
+                  src="suspects/brenda.png"
+                  data-filename="brenda.png"
+                  alt="Brenda"
+                  class="suspect-photo"
+                  onload="handlePhotoSuccess(this)"
+                  onerror="handlePhotoError(this)"
+                />
+                <div class="suspect-fallback-avatar" style="display:none;">B</div>
+              </div>
+              <span class="suspect-preview-name">Brenda</span>
+            </div>
+
+            <!-- Tito -->
+            <div class="suspect-preview-card" style="--card-accent: #f59e0b;">
+              <div class="avatar-wrapper">
+                <img
+                  src="suspects/tito.png"
+                  data-filename="tito.png"
+                  alt="Tito"
+                  class="suspect-photo"
+                  onload="handlePhotoSuccess(this)"
+                  onerror="handlePhotoError(this)"
+                />
+                <div class="suspect-fallback-avatar" style="display:none;">T</div>
+              </div>
+              <span class="suspect-preview-name">Tito</span>
+            </div>
+
+            <!-- Chichi -->
+            <div class="suspect-preview-card" style="--card-accent: #a855f7;">
+              <div class="avatar-wrapper">
+                <img
+                  src="suspects/chichi.png"
+                  data-filename="chichi.png"
+                  alt="Chichi"
+                  class="suspect-photo"
+                  onload="handlePhotoSuccess(this)"
+                  onerror="handlePhotoError(this)"
+                />
+                <div class="suspect-fallback-avatar" style="display:none;">C</div>
+              </div>
+              <span class="suspect-preview-name">Chichi</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de bienvenida -->
+        <div class="welcome-actions">
+          <button id="btn-start-investigation" class="btn-investigate-primary" type="button">
+            <span>🔎</span>
+            <span>COMENZAR INVESTIGACIÓN</span>
+          </button>
+
+          <button id="btn-open-instructions" class="btn-instructions-secondary" type="button">
+            <span>📖</span>
+            <span>INSTRUCCIONES</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           PANTALLA 2: NARRATIVA DEL CASO
+      ═══════════════════════════════════════════════════════ -->
+      <section id="screen-narrative" class="murdoku-screen hidden" aria-label="Introducción narrativa del caso">
+        <article class="case-dossier">
+          <header class="dossier-header">
+            <span class="dossier-tag">Expediente confidencial</span>
+            <h2 class="dossier-title">🔎 EL CASO DEL REGALO DESAPARECIDO</h2>
+          </header>
+
+          <div class="dossier-body">
+            <p>Era la Confirmación de Sofi.</p>
+            <p>Todo estaba preparado: comida, música, familia y, sobre todo, el regalo que Sofi llevaba días esperando.</p>
+            <p>Pero justo antes de entregárselo...</p>
+            <p class="dossier-alert">EL REGALO DESAPARECIÓ.</p>
+            <p>Solamente cuatro personas estuvieron cerca del lugar donde estaba guardado:</p>
+            <div class="dossier-suspects-highlight">
+              <strong>Kike, Brenda, Tito y Chichi.</strong>
+            </div>
+            <p>Todos aseguran no saber nada.</p>
+            <p>Pero alguien está mintiendo.</p>
+            <p>Tu misión es resolver el Murdoku, reconstruir las pistas y descubrir quién escondió el regalo de Sofi.</p>
+            <p class="dossier-luck">Buena suerte, detective. 🕵️</p>
+          </div>
+
+          <div class="dossier-actions">
+            <button id="btn-investigate-case" class="btn-investigate-primary" type="button">
+              <span>🔍</span>
+              <span>INVESTIGAR EL CASO</span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           PANTALLA 3: TABLERO DEL MURDOKU
+      ═══════════════════════════════════════════════════════ -->
+      <section id="screen-board" class="murdoku-screen hidden" aria-label="Tablero interactivo del juego">
+        <header class="board-header">
+          <h2 class="board-title">Tablero de Investigación</h2>
+          <p class="board-subtitle">Completá el tablero 4×4 sin repetir sospechosos en filas, columnas o cuadrantes 2×2.</p>
+          <div class="board-quick-controls">
+            <button id="btn-instructions-board" class="btn-mini-rule" type="button">
+              📖 Recordar reglas
+            </button>
+          </div>
+        </header>
+
+        <!-- Banner de advertencias y errores en tiempo real -->
+        <div id="board-warning-banner" class="warning-banner hidden" role="alert" aria-live="polite"></div>
+
+        <!-- Cuadrícula 4x4 (dividida en 4 cuadrantes 2x2) -->
+        <div class="murdoku-grid-wrapper">
+          <div id="murdoku-board" class="murdoku-board" role="grid" aria-label="Tablero Murdoku de 4 por 4">
+            <!-- Las 16 celdas se inyectan dinámicamente desde murdoku.js -->
+          </div>
+        </div>
+
+        <!-- Acciones del tablero -->
+        <div class="board-actions">
+          <button id="btn-check-solution" class="btn-check-solution" type="button">
+            <span>🔍</span>
+            <span>COMPROBAR SOLUCIÓN</span>
+          </button>
+
+          <div class="board-secondary-actions">
+            <button id="btn-reset-board" class="btn-text-link" type="button">
+              ↺ Limpiar mis respuestas
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           PANTALLA 4: RESULTADO FINAL (CASO CERRADO & CULPABLE)
+      ═══════════════════════════════════════════════════════ -->
+      <section id="screen-solved" class="murdoku-screen hidden" aria-label="Caso cerrado y culpable identificado">
+        <article class="case-closed-card">
+          <div class="closed-header-badge">
+            <span>🚨</span>
+            <span>CASO CERRADO</span>
+          </div>
+
+          <h2 class="closed-main-title">¡Misterio Resuelto!</h2>
+
+          <!-- Retrato de Tito con luz de detective y sello -->
+          <div class="culprit-portrait-area">
+            <div class="culprit-spotlight"></div>
+            <div class="culprit-frame">
+              <img
+                id="culprit-photo"
+                src="suspects/tito.png"
+                data-filename="tito.png"
+                alt="Tito"
+                class="culprit-photo"
+                onload="handlePhotoSuccess(this)"
+                onerror="handlePhotoError(this)"
+              />
+              <div class="culprit-fallback" style="display:none;">
+                <span class="culprit-fallback-emoji">😈</span>
+                <span class="culprit-fallback-name">Tito</span>
+              </div>
+            </div>
+            <div class="culprit-stamp">¡CULPABLE!</div>
+          </div>
+
+          <div class="culprit-identity-tag">
+            SOSPECHOSO IDENTIFICADO
+          </div>
+
+          <!-- Mensaje exacto requerido por el usuario -->
+          <div class="closed-narrative">
+            <h3 class="closed-headline">Caso cerrado. 🔎</h3>
+            <p class="closed-subheadline">Tito escondió el regalo de Sofi.</p>
+            <p class="closed-detail">
+              Y lo peor de todo es que probablemente lo hizo <strong>para hacerle una broma</strong>. 😈🎁
+            </p>
+          </div>
+
+          <!-- Botón de recompensa inicialmente bloqueado / desbloqueado -->
+          <div class="reward-unlock-wrapper">
+            <button id="btn-reward-unlock" class="btn-reward-unlock locked" type="button">
+              <span>🔒</span>
+              <span>RECOMPENSA BLOQUEADA</span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL 1: INSTRUCCIONES DEL JUEGO
+  ═══════════════════════════════════════════════════════ -->
+  <div id="instructions-modal" class="picker-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="instructions-title">
+    <div class="picker-card" style="max-width: 540px;">
+      <div class="picker-header">
+        <h3 id="instructions-title" class="picker-title">📖 ¿CÓMO SE JUEGA?</h3>
+        <button id="btn-close-instructions-x" class="picker-close-btn" onclick="document.getElementById('instructions-modal').classList.add('hidden')" aria-label="Cerrar instrucciones">✕</button>
+      </div>
+
+      <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-primary); display: flex; flex-direction: column; gap: 0.9rem;">
+        <p>
+          Este juego funciona como un Sudoku, pero en lugar de números vas a utilizar a los cuatro sospechosos.
+        </p>
+
+        <div>
+          <strong style="color: var(--accent-gold);">Los sospechosos son:</strong>
+          <ul style="margin: 0.5rem 0 0 1.2rem; color: var(--text-secondary);">
+            <li><strong>Kike</strong></li>
+            <li><strong>Brenda</strong></li>
+            <li><strong>Tito</strong></li>
+            <li><strong>Chichi</strong></li>
+          </ul>
+        </div>
+
+        <div>
+          <strong style="color: var(--accent-violet);">Reglas:</strong>
+          <ol style="margin: 0.5rem 0 0 1.2rem; display: flex; flex-direction: column; gap: 0.4rem; color: var(--text-secondary);">
+            <li>El tablero es de <strong>4 × 4</strong>.</li>
+            <li>Cada fila debe contener a los cuatro sospechosos exactamente una vez.</li>
+            <li>Cada columna debe contener a los cuatro sospechosos exactamente una vez.</li>
+            <li>Cada cuadrante de <strong>2 × 2</strong> debe contener también a los cuatro sospechosos exactamente una vez.</li>
+            <li>Las casillas que ya están colocadas son pistas y no pueden modificarse.</li>
+            <li>Para completar el caso tenés que resolver correctamente todo el tablero.</li>
+            <li>Cuando el tablero esté completo, se revelará el resultado de la investigación.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="picker-actions" style="justify-content: center;">
+        <button id="btn-close-instructions" class="btn-investigate-primary" style="padding: 0.75rem 1.8rem; font-size: 0.95rem;" type="button">
+          ← VOLVER AL CASO
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL 2: SELECTOR DE SOSPECHOSOS
+  ═══════════════════════════════════════════════════════ -->
+  <div id="suspect-picker-modal" class="picker-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="picker-cell-title">
+    <div class="picker-card">
+      <div class="picker-header">
+        <h3 id="picker-cell-title" class="picker-title">Elegir sospechoso</h3>
+        <button id="btn-close-picker" class="picker-close-btn" aria-label="Cerrar selector">✕</button>
+      </div>
+
+      <!-- Cuadrícula con las 4 tarjetas de sospechosos -->
+      <div class="picker-suspects-grid">
+        <!-- Kike -->
+        <button class="picker-option" data-suspect="kike" style="--suspect-color: #38bdf8;" type="button">
+          <div class="picker-avatar">
+            <img
+              src="suspects/kike.png"
+              data-filename="kike.png"
+              alt="Kike"
+              class="suspect-photo"
+              onload="handlePhotoSuccess(this)"
+              onerror="handlePhotoError(this)"
+            />
+            <div class="suspect-fallback-avatar" style="display:none;">K</div>
+          </div>
+          <span class="picker-option-name">Kike</span>
+          <span class="picker-option-alias">El tío Kike</span>
+        </button>
+
+        <!-- Brenda -->
+        <button class="picker-option" data-suspect="brenda" style="--suspect-color: #ec4899;" type="button">
+          <div class="picker-avatar">
+            <img
+              src="suspects/brenda.png"
+              data-filename="brenda.png"
+              alt="Brenda"
+              class="suspect-photo"
+              onload="handlePhotoSuccess(this)"
+              onerror="handlePhotoError(this)"
+            />
+            <div class="suspect-fallback-avatar" style="display:none;">B</div>
+          </div>
+          <span class="picker-option-name">Brenda</span>
+          <span class="picker-option-alias">Brenda</span>
+        </button>
+
+        <!-- Tito -->
+        <button class="picker-option" data-suspect="tito" style="--suspect-color: #f59e0b;" type="button">
+          <div class="picker-avatar">
+            <img
+              src="suspects/tito.png"
+              data-filename="tito.png"
+              alt="Tito"
+              class="suspect-photo"
+              onload="handlePhotoSuccess(this)"
+              onerror="handlePhotoError(this)"
+            />
+            <div class="suspect-fallback-avatar" style="display:none;">T</div>
+          </div>
+          <span class="picker-option-name">Tito</span>
+          <span class="picker-option-alias">Tito</span>
+        </button>
+
+        <!-- Chichi -->
+        <button class="picker-option" data-suspect="chichi" style="--suspect-color: #a855f7;" type="button">
+          <div class="picker-avatar">
+            <img
+              src="suspects/chichi.png"
+              data-filename="chichi.png"
+              alt="Chichi"
+              class="suspect-photo"
+              onload="handlePhotoSuccess(this)"
+              onerror="handlePhotoError(this)"
+            />
+            <div class="suspect-fallback-avatar" style="display:none;">C</div>
+          </div>
+          <span class="picker-option-name">Chichi</span>
+          <span class="picker-option-alias">Chichi</span>
+        </button>
+      </div>
+
+      <div class="picker-actions">
+        <button id="btn-picker-clear" class="btn-picker-clear" type="button" style="display:none;">
+          ✕ Quitar sospechoso
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL 3: RECOMPENSA DESBLOQUEADA
+  ═══════════════════════════════════════════════════════ -->
+  <div id="reward-modal" class="picker-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="reward-modal-title">
+    <div class="reward-modal-card">
+      <div class="reward-icon-huge">🎁</div>
+
+      <h3 id="reward-modal-title" class="reward-celebration-title">
+        🎉 ¡Felicitaciones! Descubriste quién escondió el regalo.
+      </h3>
+
+      <div class="reward-card-inner">
+        <div class="reward-card-heading">🎁 Tu recompensa te está esperando...</div>
+        <p class="reward-card-text">
+          ¡Excelente deducción, Sofi! Has resuelto el primer misterio con éxito y desenmascaraste a Tito.
+        </p>
+      </div>
+
+      <div class="reward-clue-badge">
+        <strong>Pista desbloqueada para la aventura:</strong><br />
+        « Tito escondió el regalo de Sofi para hacerle una broma 😈🎁 »
+      </div>
+
+      <button id="btn-return-adventure" class="btn-return-adventure" type="button">
+        ← Volver a la aventura con el caso resuelto
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/gamesBridge.js"></script>
+  <script src="murdokuConfig.js"></script>
+  <script src="murdoku.js"></script>
+
+  <!-- Partículas de fondo estilo canvas -->
+  <script>
+    (function () {
+      const canvas = document.getElementById('bg-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      function createParticles() {
+        particles = [];
+        const count = Math.floor((canvas.width * canvas.height) / 16000);
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 1.5 + 0.5,
+            alpha: Math.random() * 0.5 + 0.2,
+            speed: Math.random() * 0.3 + 0.1,
+            color: Math.random() > 0.5 ? '270, 70%, 65%' : '42, 88%, 62%'
+          });
+        }
+      }
+      createParticles();
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.y -= p.speed;
+          if (p.y < 0) {
+            p.y = canvas.height;
+            p.x = Math.random() * canvas.width;
+          }
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${p.color}, ${p.alpha})`;
+          ctx.fill();
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+  </script>
+</body>
+</html>

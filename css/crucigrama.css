@@ -1,0 +1,1023 @@
+/* ═══════════════════════════════════════════════════════════════
+   crucigrama.css  –  Estilos exclusivos para El Crucigrama Musical
+   Estética: Elegante, moderna, cálida, romántica y musical
+   Paleta: Deep navy, violeta radiante, fucsia suave y dorado ámbar
+═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --cruci-cell-size: clamp(26px, 3.7vw, 35px);
+  --cruci-gold: hsl(42, 95%, 58%);
+  --cruci-gold-glow: hsla(42, 95%, 58%, 0.35);
+  --cruci-violet: hsl(270, 70%, 65%);
+  --cruci-violet-glow: hsla(270, 70%, 65%, 0.4);
+  --cruci-pink: hsl(330, 80%, 65%);
+  --cruci-border: hsla(230, 20%, 35%, 0.9);
+  --cruci-cell-active-word: hsl(265, 80%, 95%);
+  --cruci-cell-active-cell: hsl(46, 100%, 93%);
+  --cruci-cell-text: #0f172a;
+}
+
+/* ─── WRAPPER PRINCIPAL Y VISTAS ────────────────────────────── */
+.crucigrama-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  padding-bottom: 3.5rem;
+}
+
+/* Transiciones fluidas entre pantallas */
+.crucigrama-screen {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crucigrama-screen.hidden {
+  display: none !important;
+  opacity: 0;
+  transform: translateY(14px);
+  pointer-events: none;
+}
+
+/* ─── PANTALLA 1: BIENVENIDA ────────────────────────────────── */
+.welcome-hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 680px;
+  padding: 1.5rem 1rem 3rem;
+  animation: heroEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes heroEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.music-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.25rem;
+  border-radius: 50px;
+  background: hsla(270, 70%, 65%, 0.14);
+  border: 1px solid hsla(270, 70%, 65%, 0.4);
+  color: hsl(270, 85%, 75%);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 0 20px hsla(270, 70%, 65%, 0.2);
+}
+
+.welcome-title {
+  font-size: clamp(2.1rem, 5.8vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: #fff;
+  text-shadow: 0 4px 30px hsla(270, 70%, 65%, 0.35), 0 2px 10px hsla(42, 95%, 58%, 0.2);
+  letter-spacing: -0.02em;
+}
+
+.welcome-subtitle {
+  font-size: clamp(1.05rem, 3vw, 1.35rem);
+  color: var(--accent-gold);
+  line-height: 1.5;
+  max-width: 580px;
+}
+
+/* Decoración musical central */
+.music-vinyl-art {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vinyl-disc {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #252836 20%, #151722 25%, #252836 40%, #151722 55%, #0f111a 70%);
+  border: 4px solid hsla(255, 60%, 70%, 0.25);
+  box-shadow: 0 10px 40px hsla(232, 50%, 4%, 0.8), 0 0 35px hsla(270, 70%, 65%, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: vinylRotate 16s linear infinite;
+}
+
+@keyframes vinylRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.vinyl-center {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(330, 80%, 65%), hsl(270, 70%, 65%));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  box-shadow: 0 0 15px hsla(330, 80%, 65%, 0.5);
+}
+
+.floating-notes-container {
+  position: absolute;
+  inset: -20px;
+  pointer-events: none;
+}
+
+.floating-note {
+  position: absolute;
+  font-size: 1.4rem;
+  opacity: 0.85;
+  animation: floatNote 3.5s ease-in-out infinite alternate;
+}
+
+.note-1 { top: 0; left: 10px; animation-delay: 0s; color: hsl(42, 95%, 65%); }
+.note-2 { top: 15px; right: 5px; animation-delay: 0.7s; color: hsl(330, 80%, 70%); }
+.note-3 { bottom: 10px; left: 15px; animation-delay: 1.4s; color: hsl(270, 80%, 75%); }
+.note-4 { bottom: 5px; right: 20px; animation-delay: 2.1s; color: hsl(180, 80%, 65%); }
+
+@keyframes floatNote {
+  0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.6; }
+  50% { transform: translateY(-8px) scale(1.15) rotate(10deg); opacity: 1; }
+  100% { transform: translateY(4px) scale(0.95) rotate(-10deg); opacity: 0.7; }
+}
+
+/* Botones de bienvenida */
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 380px;
+  margin-top: 0.5rem;
+}
+
+.btn-start-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.1rem 2rem;
+  background: linear-gradient(135deg, hsl(270, 75%, 60%) 0%, hsl(315, 75%, 58%) 100%);
+  color: #fff;
+  border: 1px solid hsla(270, 80%, 80%, 0.4);
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 10px 30px hsla(270, 70%, 55%, 0.4), 0 0 20px hsla(315, 75%, 58%, 0.3);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s, filter 0.25s;
+}
+
+.btn-start-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 16px 40px hsla(270, 70%, 55%, 0.55), 0 0 30px hsla(315, 75%, 58%, 0.45);
+  filter: brightness(1.08);
+}
+
+.btn-start-primary:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btn-instructions-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.8rem;
+  background: hsla(236, 24%, 18%, 0.85);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+.btn-instructions-secondary:hover {
+  background: hsla(236, 28%, 24%, 0.95);
+  border-color: var(--accent-violet);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ─── PANTALLA 2: JUEGO (CRUCIGRAMA) ────────────────────────── */
+.board-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  width: 100%;
+}
+
+.board-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.board-title {
+  font-size: clamp(1.6rem, 4vw, 2.3rem);
+  font-weight: 800;
+  color: #fff;
+}
+
+.board-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 820px;
+  flex-wrap: wrap;
+  padding: 0.4rem 0.5rem;
+}
+
+.progress-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: hsla(236, 24%, 14%, 0.8);
+  border: 1px solid var(--border-subtle);
+  padding: 0.35rem 0.9rem;
+  border-radius: 50px;
+}
+
+.progress-pill strong {
+  color: var(--accent-gold);
+}
+
+.board-quick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: hsla(236, 24%, 14%, 0.6);
+  border: 1px solid var(--border-subtle);
+  padding: 0.35rem 0.85rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.board-quick-btn:hover {
+  background: hsla(236, 24%, 20%, 0.9);
+  color: var(--text-primary);
+  border-color: var(--border-active);
+}
+
+/* ─── BARRA DE PISTA ACTIVA (STICKY/DESTACADA) ──────────────── */
+.active-clue-banner {
+  width: 100%;
+  max-width: 820px;
+  background: linear-gradient(135deg, hsla(236, 28%, 15%, 0.95), hsla(260, 35%, 17%, 0.95));
+  border: 1.5px solid hsla(270, 70%, 65%, 0.4);
+  border-radius: 14px;
+  padding: 0.85rem 1.2rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  box-shadow: 0 8px 30px hsla(232, 50%, 4%, 0.5), 0 0 20px hsla(270, 70%, 65%, 0.15);
+  backdrop-filter: blur(10px);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.active-clue-badge {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: linear-gradient(135deg, hsl(270, 70%, 60%), hsl(315, 75%, 58%));
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.active-clue-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.4;
+  flex-grow: 1;
+}
+
+.active-clue-length {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  background: hsla(42, 95%, 58%, 0.12);
+  border: 1px solid hsla(42, 95%, 58%, 0.35);
+  padding: 0.2rem 0.55rem;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+
+/* ─── CONTENEDOR Y ESTRUCTURA DE LA GRILLA ───────────────────── */
+.grid-scroll-wrapper {
+  width: 100%;
+  max-width: 820px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0 1rem;
+  display: flex;
+  justify-content: center;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Grilla clásica */
+.crucigrama-grid {
+  --s: var(--cruci-cell-size);
+  display: grid;
+  grid-template-columns: repeat(19, var(--s));
+  grid-auto-rows: var(--s);
+  width: max-content;
+  margin: 0 auto;
+  background: #111420;
+  border: 2px solid hsla(255, 60%, 70%, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 15px 50px hsla(232, 50%, 4%, 0.7), 0 0 30px hsla(270, 70%, 65%, 0.12);
+  user-select: none;
+}
+
+/* Casillero individual */
+.cell {
+  position: relative;
+  box-sizing: border-box;
+  width: var(--cruci-cell-size);
+  height: var(--cruci-cell-size);
+  background: #ffffff;
+  border: 1px solid var(--cruci-border);
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Casillero negro / separador */
+.cell.black {
+  background: #11131c;
+  border-color: #1a1e2d;
+  pointer-events: none;
+}
+
+/* Número de la celda */
+.cell-number {
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  font-size: calc(var(--cruci-cell-size) * 0.31);
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+  line-height: 1;
+  color: #1e293b;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Input interno en cada celda jugable */
+.cell-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: calc(var(--cruci-cell-size) * 0.58);
+  font-weight: 800;
+  color: var(--cruci-cell-text);
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  caret-color: transparent;
+  outline: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  z-index: 1;
+  position: relative;
+}
+
+/* Estados de interacción de las celdas */
+.cell.active-word {
+  background: var(--cruci-cell-active-word) !important;
+}
+
+.cell.active-cell {
+  background: var(--cruci-cell-active-cell) !important;
+  box-shadow: inset 0 0 0 2.5px hsl(42, 95%, 50%), 0 0 12px hsla(42, 95%, 58%, 0.5) !important;
+  z-index: 3;
+}
+
+.cell.active-cell .cell-input {
+  color: #000;
+  font-weight: 900;
+}
+
+/* Estado de error al comprobar */
+.cell.error-cell {
+  background: hsl(0, 95%, 92%) !important;
+  box-shadow: inset 0 0 0 2px hsl(0, 85%, 60%) !important;
+  animation: cellShake 0.4s ease-in-out;
+}
+
+.cell.error-cell .cell-input {
+  color: hsl(0, 85%, 45%) !important;
+}
+
+@keyframes cellShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-3px); }
+  40%, 80% { transform: translateX(3px); }
+}
+
+/* Estado correcto / completado */
+.cell.correct-cell {
+  background: hsl(145, 80%, 94%) !important;
+}
+
+/* ─── BANNER DE FEEDBACK / ERRORES ─────────────────────────── */
+.crucigrama-warning-banner {
+  width: 100%;
+  max-width: 820px;
+  background: hsla(0, 85%, 60%, 0.12);
+  border: 1px solid hsla(0, 85%, 60%, 0.4);
+  color: hsl(0, 90%, 85%);
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  box-shadow: 0 4px 20px hsla(0, 85%, 60%, 0.15);
+  animation: fadeInDown 0.3s ease;
+}
+
+.crucigrama-warning-banner.hidden {
+  display: none;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── BOTONES DE ACCIÓN DEL JUEGO ───────────────────────────── */
+.board-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 820px;
+  margin-top: 1.25rem;
+}
+
+.btn-check-solution {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.1rem 2.5rem;
+  background: linear-gradient(135deg, hsl(42, 95%, 55%) 0%, hsl(28, 95%, 52%) 100%);
+  color: hsl(232, 40%, 8%);
+  border: 1px solid hsla(42, 95%, 70%, 0.5);
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow: 0 10px 30px hsla(42, 95%, 55%, 0.4), 0 0 20px hsla(42, 95%, 58%, 0.3);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s, filter 0.25s;
+}
+
+.btn-check-solution:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 16px 40px hsla(42, 95%, 55%, 0.55), 0 0 30px hsla(42, 95%, 58%, 0.45);
+  filter: brightness(1.08);
+}
+
+.btn-check-solution:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btn-text-link {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.btn-text-link:hover {
+  color: var(--text-primary);
+  background: hsla(255, 30%, 50%, 0.08);
+}
+
+/* ─── SECCIÓN DE PISTAS (HORIZONTALES Y VERTICALES) ─────────── */
+.clues-section {
+  width: 100%;
+  max-width: 820px;
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.clues-column {
+  background: hsla(236, 24%, 13%, 0.8);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(8px);
+}
+
+.clues-column-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.clues-column-title span.count-pill {
+  font-size: 0.78rem;
+  color: var(--accent-violet);
+  background: hsla(255, 60%, 70%, 0.12);
+  padding: 0.15rem 0.55rem;
+  border-radius: 50px;
+  margin-left: auto;
+}
+
+.clues-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.clue-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  background: hsla(236, 24%, 17%, 0.5);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.clue-item:hover {
+  background: hsla(236, 24%, 22%, 0.8);
+  border-color: var(--border-active);
+  transform: translateX(3px);
+}
+
+.clue-item.active-clue {
+  background: linear-gradient(135deg, hsla(270, 70%, 55%, 0.25), hsla(315, 75%, 55%, 0.18));
+  border-color: var(--cruci-violet);
+  box-shadow: 0 4px 18px hsla(270, 70%, 65%, 0.25);
+}
+
+.clue-item.active-clue .clue-number-badge {
+  background: linear-gradient(135deg, hsl(270, 70%, 60%), hsl(315, 75%, 58%));
+  color: #fff;
+}
+
+.clue-item.completed-clue {
+  opacity: 0.75;
+}
+
+.clue-item.completed-clue .clue-number-badge {
+  background: hsla(145, 65%, 45%, 0.2);
+  color: hsl(145, 70%, 60%);
+  border-color: hsla(145, 65%, 45%, 0.4);
+}
+
+.clue-number-badge {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: hsla(255, 60%, 70%, 0.12);
+  border: 1px solid hsla(255, 60%, 70%, 0.25);
+  color: var(--accent-gold);
+  font-size: 0.85rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.clue-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.clue-desc {
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.clue-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ─── PANTALLA 3: VICTORIA (RESULTADO FINAL) ────────────────── */
+.victory-card {
+  width: 100%;
+  max-width: 620px;
+  background: linear-gradient(135deg, hsla(236, 28%, 15%, 0.95), hsla(260, 35%, 17%, 0.95));
+  border: 2px solid hsla(42, 95%, 58%, 0.4);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+  box-shadow: 0 20px 60px hsla(232, 50%, 4%, 0.8), 0 0 40px hsla(42, 95%, 58%, 0.25);
+  backdrop-filter: blur(14px);
+  animation: heroEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.victory-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.25rem;
+  border-radius: 50px;
+  background: hsla(42, 95%, 58%, 0.15);
+  border: 1px solid hsla(42, 95%, 58%, 0.45);
+  color: var(--cruci-gold);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.victory-title {
+  font-size: clamp(2rem, 5vw, 2.7rem);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.victory-disc-area {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+
+.victory-disc {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f59e0b 20%, #b45309 60%, #78350f 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  box-shadow: 0 0 35px hsla(42, 95%, 58%, 0.6);
+  animation: pulseGold 2s ease-in-out infinite;
+}
+
+@keyframes pulseGold {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 35px hsla(42, 95%, 58%, 0.5); }
+  50% { transform: scale(1.06); box-shadow: 0 0 55px hsla(42, 95%, 58%, 0.8); }
+}
+
+.victory-narrative {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.victory-headline {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+}
+
+.victory-detail {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+/* Botón de desbloqueo de recompensa */
+.reward-unlock-wrapper {
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+.btn-reward-unlock {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.15rem 2rem;
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  background: linear-gradient(135deg, hsl(330, 80%, 60%) 0%, hsl(270, 75%, 60%) 100%);
+  color: #fff;
+  border: 1px solid hsla(330, 80%, 80%, 0.4);
+  box-shadow: 0 12px 35px hsla(330, 80%, 60%, 0.45), 0 0 25px hsla(270, 75%, 60%, 0.35);
+  animation: pulseReward 2s ease-in-out infinite;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+@keyframes pulseReward {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+.btn-reward-unlock:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 16px 45px hsla(330, 80%, 60%, 0.6);
+}
+
+/* ─── MODALES (INSTRUCCIONES Y RECOMPENSA) ────────────────────── */
+.picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: hsla(232, 45%, 6%, 0.85);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+.picker-overlay.hidden {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.picker-card {
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: linear-gradient(135deg, hsl(236, 26%, 15%), hsl(240, 24%, 12%));
+  border: 1px solid var(--border-active);
+  border-radius: 22px;
+  padding: 1.8rem;
+  box-shadow: var(--shadow-card), 0 0 40px hsla(270, 70%, 65%, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: modalIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.picker-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.picker-close-btn {
+  background: hsla(255, 30%, 50%, 0.1);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.picker-close-btn:hover {
+  background: hsla(255, 30%, 50%, 0.25);
+  color: #fff;
+  border-color: var(--accent-violet);
+}
+
+/* Modal de recompensa */
+.reward-modal-card {
+  width: 100%;
+  max-width: 540px;
+  background: linear-gradient(135deg, hsl(236, 26%, 15%), hsl(260, 30%, 14%));
+  border: 2px solid hsla(42, 95%, 58%, 0.5);
+  border-radius: 24px;
+  padding: 2.2rem 1.8rem;
+  box-shadow: 0 25px 70px hsla(232, 50%, 4%, 0.9), 0 0 50px hsla(42, 95%, 58%, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  animation: modalIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.reward-icon-huge {
+  font-size: 4.5rem;
+  line-height: 1;
+  animation: bounceGift 1.4s ease-in-out infinite;
+}
+
+@keyframes bounceGift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.reward-celebration-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.reward-card-inner {
+  background: hsla(236, 24%, 18%, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 1.2rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.reward-card-heading {
+  font-weight: 700;
+  color: var(--accent-gold);
+  font-size: 1.05rem;
+}
+
+.reward-card-text {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.reward-clue-badge {
+  background: linear-gradient(135deg, hsla(42, 95%, 58%, 0.15), hsla(270, 70%, 65%, 0.15));
+  border: 1.5px solid hsla(42, 95%, 58%, 0.45);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  color: var(--accent-gold);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  width: 100%;
+}
+
+.btn-return-adventure {
+  width: 100%;
+  padding: 1.1rem 1.8rem;
+  border-radius: 50px;
+  background: linear-gradient(135deg, hsl(42, 95%, 55%) 0%, hsl(28, 95%, 52%) 100%);
+  color: hsl(232, 40%, 8%);
+  border: none;
+  font-family: var(--font-body);
+  font-size: 1.02rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 10px 30px hsla(42, 95%, 55%, 0.4);
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.btn-return-adventure:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+/* Canvas de confeti para victoria */
+#confetti-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+}
+
+/* ─── RESPONSIVE ADJUSTMENTS ────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --cruci-cell-size: 26px;
+  }
+  .crucigrama-container {
+    padding-bottom: 2rem;
+  }
+  .active-clue-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .active-clue-badge {
+    align-self: flex-start;
+  }
+  .clues-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --cruci-cell-size: 23px;
+  }
+  .board-actions {
+    margin-top: 1rem;
+  }
+  .btn-check-solution {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+}

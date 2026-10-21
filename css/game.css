@@ -1,0 +1,115 @@
+/* ═══════════════════════════════════════════════════════════════
+   game.css  –  Estilos compartidos para las páginas de juego
+   Incluido en games/murdoku.html, games/crucigrama.html, etc.
+═══════════════════════════════════════════════════════════════ */
+
+body.game-page {
+  min-height: 100dvh;
+  background: var(--bg-deep);
+  display: flex;
+  flex-direction: column;
+}
+
+.game-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 1.5rem;
+}
+
+/* ─── Navegación superior ─── */
+.game-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 0 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 2.5rem;
+}
+
+.btn-back {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  border: 1px solid var(--border-subtle);
+  background: hsla(255, 30%, 50%, 0.08);
+  transition: background 0.2s, color 0.2s, transform 0.2s var(--ease-bounce, ease);
+}
+
+.btn-back:hover {
+  background: hsla(255, 30%, 50%, 0.18);
+  color: var(--text-primary);
+  transform: translateX(-3px);
+}
+
+.game-nav-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* ─── Contenido del juego ─── */
+.game-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.game-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent-purple, hsl(270,70%,65%)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+}
+
+/* ─── Texto placeholder (reemplazar con el juego real) ─── */
+.game-placeholder-text {
+  font-size: 1rem;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 480px;
+  line-height: 1.7;
+  background: hsla(255, 30%, 50%, 0.06);
+  border: 1px dashed hsla(255, 30%, 60%, 0.2);
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+/* ─── Botón de desarrollo (solo para pruebas) ─── */
+.btn-dev {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.7rem 1.4rem;
+  border-radius: 50px;
+  border: 1px dashed hsla(42, 80%, 60%, 0.4);
+  background: hsla(42, 80%, 60%, 0.08);
+  color: hsl(42, 80%, 68%);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  margin-top: 1rem;
+}
+
+.btn-dev:hover:not(:disabled) {
+  background: hsla(42, 80%, 60%, 0.18);
+  transform: translateY(-2px);
+}
+
+.btn-dev:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
