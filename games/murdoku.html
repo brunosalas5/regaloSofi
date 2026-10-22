@@ -279,16 +279,13 @@
           <div class="closed-narrative">
             <h3 class="closed-headline">Caso cerrado. 🔎</h3>
             <p class="closed-subheadline">Tito escondió el regalo de Sofi.</p>
-            <p class="closed-detail">
-              Y lo peor de todo es que probablemente lo hizo <strong>para hacerle una broma</strong>. 😈🎁
-            </p>
           </div>
 
-          <!-- Botón de recompensa inicialmente bloqueado / desbloqueado -->
+          <!-- Volver a la pantalla principal -->
           <div class="reward-unlock-wrapper">
-            <button id="btn-reward-unlock" class="btn-reward-unlock locked" type="button">
-              <span>🔒</span>
-              <span>RECOMPENSA BLOQUEADA</span>
+            <button id="btn-return-home" class="btn-reward-unlock unlocked" type="button">
+              <span>←</span>
+              <span>VOLVER AL INICIO</span>
             </button>
           </div>
         </article>
@@ -430,35 +427,6 @@
           ✕ Quitar sospechoso
         </button>
       </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════
-       MODAL 3: RECOMPENSA DESBLOQUEADA
-  ═══════════════════════════════════════════════════════ -->
-  <div id="reward-modal" class="picker-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="reward-modal-title">
-    <div class="reward-modal-card">
-      <div class="reward-icon-huge">🎁</div>
-
-      <h3 id="reward-modal-title" class="reward-celebration-title">
-        🎉 ¡Felicitaciones! Descubriste quién escondió el regalo.
-      </h3>
-
-      <div class="reward-card-inner">
-        <div class="reward-card-heading">🎁 Tu recompensa te está esperando...</div>
-        <p class="reward-card-text">
-          ¡Excelente deducción, Sofi! Has resuelto el primer misterio con éxito y desenmascaraste a Tito.
-        </p>
-      </div>
-
-      <div class="reward-clue-badge">
-        <strong>Pista desbloqueada para la aventura:</strong><br />
-        « Tito escondió el regalo de Sofi para hacerle una broma 😈🎁 »
-      </div>
-
-      <button id="btn-return-adventure" class="btn-return-adventure" type="button">
-        ← Volver a la aventura con el caso resuelto
-      </button>
     </div>
   </div>
 

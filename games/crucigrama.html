@@ -49,9 +49,6 @@
           🎵 EL CRUCIGRAMA MUSICAL
         </h1>
 
-        <p class="welcome-subtitle">
-          Un crucigrama personalizado para Sofi, lleno de canciones, recuerdos y mucho ritmo.
-        </p>
 
         <!-- Ilustración de vinilo giratorio y notas flotantes -->
         <div class="music-vinyl-art">
@@ -169,7 +166,7 @@
       <!-- ═══════════════════════════════════════════════════════
            PANTALLA 3: VICTORIA (RESULTADO FINAL)
       ═══════════════════════════════════════════════════════ -->
-      <section id="screen-victory" class="crucigrama-screen hidden" aria-label="Pantalla de victoria y recompensa">
+      <section id="screen-victory" class="crucigrama-screen hidden" aria-label="Pantalla de victoria">
         <article class="victory-card">
           <div class="victory-badge">
             <span>🎉</span>
@@ -190,11 +187,11 @@
             </p>
           </div>
 
-          <!-- Botón para abrir la recompensa -->
+          <!-- Volver a la pantalla principal -->
           <div class="reward-unlock-wrapper">
-            <button id="btn-reward-unlock" class="btn-reward-unlock" type="button">
-              <span>🎁</span>
-              <span>ABRIR RECOMPENSA</span>
+            <button id="btn-return-home" class="btn-reward-unlock" type="button">
+              <span>←</span>
+              <span>VOLVER AL INICIO</span>
             </button>
           </div>
         </article>
@@ -232,7 +229,7 @@
             <li>Podés seleccionar una pista para encontrar rápidamente dónde escribir.</li>
             <li>Cuando hayas completado todas las palabras aparecerá el botón para comprobar el crucigrama.</li>
             <li>Si hay errores, las respuestas incorrectas se marcarán visualmente para que puedas corregirlas.</li>
-            <li>Cuando todas las palabras sean correctas, se desbloqueará la recompensa.</li>
+            <li>Cuando todas las palabras sean correctas, se mostrará la pantalla de victoria.</li>
           </ol>
         </div>
       </div>
@@ -242,35 +239,6 @@
           ← VOLVER
         </button>
       </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════
-       MODAL 2: RECOMPENSA DESBLOQUEADA
-  ═══════════════════════════════════════════════════════ -->
-  <div id="reward-modal" class="picker-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="reward-modal-title">
-    <div class="reward-modal-card">
-      <div class="reward-icon-huge">🎁</div>
-
-      <h3 id="reward-modal-title" class="reward-celebration-title">
-        🎉 ¡Felicitaciones, Sofi!
-      </h3>
-
-      <div class="reward-card-inner">
-        <div class="reward-card-heading">🎁 Tu recompensa te está esperando...</div>
-        <p class="reward-card-text">
-          ¡Excelente oído musical, Sofi! Demostraste que te acordás de cada canción, de los viajes en auto, de las previas y de nuestra música favorita.
-        </p>
-      </div>
-
-      <div class="reward-clue-badge">
-        <strong>Pista desbloqueada para la aventura:</strong><br />
-        « Tito dejó una nota musical: ¡El regalo está escondido al ritmo de sus canciones favoritas! 🎵✨ »
-      </div>
-
-      <button id="btn-return-adventure" class="btn-return-adventure" type="button">
-        ← Volver a la aventura con el desafío completado
-      </button>
     </div>
   </div>
 

@@ -16,8 +16,10 @@
 
 /* ═══════════════════════════════════════════════════════
    1. CONFIG  –  DATOS DE JUEGOS Y PISTAS
-   ▸ Para agregar/cambiar una pista, solo editá el campo
+   ▸ Para agregar/cambiar una pista de texto, editá el campo
      "clue" del juego correspondiente.
+   ▸ Para una pista de audio, agregá "clueAudio" con la ruta
+     relativa al index.html (ej.: "assets/audio/pista.mp3").
    ▸ Para cambiar el nombre o ícono de un juego, editá
      "title" e "icon".
 ═══════════════════════════════════════════════════════ */
@@ -29,8 +31,8 @@ const GAMES_CONFIG = {
     number:      'Desafío 1',
     description: 'Un sudoku con un giro mortal. ¿Podés resolverlo?',
     href:        'games/murdoku.html',
-    // ── PISTA 1 ── Modificar este texto cuando esté lista:
-    clue:        'Caso cerrado: Tito escondió el regalo de Sofi para hacerle una broma 😈🎁',
+    // ── PISTA 1 ── Se muestra al completar el Murdoku:
+    clue:        'Uno es un rey. El otro, un príncipe.\nPero no te emociones con los cuentos de hadas…',
   },
   crucigrama: {
     id:          'crucigrama',
@@ -39,8 +41,9 @@ const GAMES_CONFIG = {
     number:      'Desafío 2',
     description: 'Las palabras guardan secretos. Encontrá las respuestas.',
     href:        'games/crucigrama.html',
-    // ── PISTA 2 ── Desbloqueada al completar el crucigrama:
-    clue:        'Pista musical: Tito dejó una nota diciendo que el regalo está escondido al ritmo de sus canciones favoritas 🎵✨',
+    // ── PISTA 2 ── Se muestra al completar el crucigrama:
+    clue:        'Dale play y escuchá con atención…',
+    clueAudio:   'assets/audio/pista-crucigrama.mp3',
   },
   tercerjuego: {
     id:          'tercerjuego',
@@ -527,15 +530,36 @@ const ClueModal = (() => {
   const bodyEl    = document.getElementById('clue-body');
   const closeBtn  = document.getElementById('clue-close');
 
+  const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.14v13.72c0 .82.9 1.32 1.6.9l10.5-6.86a1.06 1.06 0 0 0 0-1.8L9.6 4.24A1.06 1.06 0 0 0 8 5.14Z"/></svg>';
+  const PAUSE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>';
+  const WAVE_HEIGHTS = [
+    32, 54, 40, 72, 48, 86, 58, 96, 44, 68, 36, 78,
+    56, 90, 42, 64, 50, 84, 38, 70, 46, 92, 60, 74
+  ];
+
+  let audioPlayer = null;
+
   function open(gameId) {
     const game = GAMES_CONFIG[gameId];
     if (!game) return;
 
-    // Llenar contenido
-    titleEl.textContent = `Pista: ${game.title}`;
-    bodyEl.textContent  = game.clue;
+    // Si había un audio de otra pista, detenerlo antes de cambiar el contenido.
+    cleanupAudio();
 
-    // Mostrar overlay
+    titleEl.textContent = `Pista: ${game.title}`;
+    bodyEl.textContent = '';
+
+    if (game.clue) {
+      const text = document.createElement('p');
+      text.className = 'clue-text';
+      text.textContent = game.clue;
+      bodyEl.appendChild(text);
+    }
+
+    if (game.clueAudio) {
+      bodyEl.appendChild(createAudioPlayer(game.clueAudio));
+    }
+
     overlay.classList.remove('hidden');
     // Resetear animación del modal
     const modal = document.getElementById('clue-modal');
@@ -543,12 +567,190 @@ const ClueModal = (() => {
     void modal.offsetWidth;
     modal.style.animation = '';
 
-    // Foco en el botón de cerrar (accesibilidad)
-    setTimeout(() => closeBtn.focus(), 50);
+    // Foco en el reproductor si existe; si no, en cerrar (accesibilidad).
+    const focusTarget = bodyEl.querySelector('.clue-audio-btn') || closeBtn;
+    setTimeout(() => focusTarget.focus(), 50);
   }
 
   function close() {
+    cleanupAudio();
     overlay.classList.add('hidden');
+  }
+
+  function cleanupAudio() {
+    if (!audioPlayer) return;
+    audioPlayer.stop();
+    audioPlayer = null;
+  }
+
+  function createAudioPlayer(src) {
+    const player = document.createElement('div');
+    player.className = 'clue-audio';
+    player.setAttribute('role', 'group');
+    player.setAttribute('aria-label', 'Reproductor de pista de audio');
+
+    const audio = document.createElement('audio');
+    audio.className = 'clue-audio-element';
+    audio.src = src;
+    audio.preload = 'auto';
+    audio.setAttribute('playsinline', '');
+
+    const playBtn = document.createElement('button');
+    playBtn.type = 'button';
+    playBtn.className = 'clue-audio-btn';
+    playBtn.setAttribute('aria-label', 'Reproducir pista de audio');
+    playBtn.setAttribute('aria-pressed', 'false');
+    playBtn.innerHTML = PLAY_ICON;
+
+    const track = document.createElement('div');
+    track.className = 'clue-audio-track';
+
+    const wave = document.createElement('div');
+    wave.className = 'clue-audio-wave';
+    wave.setAttribute('aria-hidden', 'true');
+    wave.style.setProperty('--progress', '0%');
+
+    const baseBars = createWaveBars(false);
+    const activeBars = createWaveBars(true);
+    wave.appendChild(baseBars);
+    wave.appendChild(activeBars);
+
+    const status = document.createElement('span');
+    status.className = 'clue-audio-status';
+    status.setAttribute('role', 'status');
+    status.setAttribute('aria-live', 'polite');
+    status.textContent = 'Tocá play para escuchar';
+
+    track.appendChild(wave);
+    track.appendChild(status);
+    player.appendChild(audio);
+    player.appendChild(playBtn);
+    player.appendChild(track);
+
+    let rafId = null;
+    let hasError = false;
+
+    function setProgress(percent) {
+      const safe = Math.max(0, Math.min(100, percent));
+      wave.style.setProperty('--progress', `${safe}%`);
+    }
+
+    function setPlayingUI(isPlaying) {
+      player.classList.toggle('is-playing', isPlaying);
+      playBtn.innerHTML = isPlaying ? PAUSE_ICON : PLAY_ICON;
+      playBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+      playBtn.setAttribute('aria-label', isPlaying
+        ? 'Pausar pista de audio'
+        : 'Reproducir pista de audio');
+    }
+
+    function stopTicker() {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    }
+
+    function tick() {
+      rafId = null;
+      if (audio.paused || audio.ended || hasError) return;
+
+      const duration = audio.duration;
+      if (Number.isFinite(duration) && duration > 0) {
+        setProgress((audio.currentTime / duration) * 100);
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function startTicker() {
+      stopTicker();
+      rafId = requestAnimationFrame(tick);
+    }
+
+    playBtn.addEventListener('click', () => {
+      if (hasError) return;
+
+      if (!audio.paused) {
+        audio.pause();
+        return;
+      }
+
+      // Al terminar (o al volver a tocar tras el final), reproducir desde cero.
+      if (audio.ended) {
+        audio.currentTime = 0;
+        setProgress(0);
+      }
+
+      const playPromise = audio.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {
+          markError('No se pudo reproducir la pista de audio.');
+        });
+      }
+    });
+
+    audio.addEventListener('play', () => {
+      if (hasError) return;
+      setPlayingUI(true);
+      status.textContent = 'Reproduciendo…';
+      startTicker();
+    });
+
+    audio.addEventListener('pause', () => {
+      stopTicker();
+      setPlayingUI(false);
+      if (!audio.ended && !hasError) {
+        status.textContent = 'Pausado · tocá play';
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      stopTicker();
+      setPlayingUI(false);
+      setProgress(100);
+      status.textContent = 'Tocá play para repetir';
+    });
+
+    audio.addEventListener('error', () => {
+      markError('No se pudo cargar la pista de audio.');
+    });
+
+    function markError(message) {
+      hasError = true;
+      stopTicker();
+      setPlayingUI(false);
+      player.classList.add('has-error');
+      playBtn.disabled = true;
+      playBtn.setAttribute('aria-label', 'Pista de audio no disponible');
+      status.textContent = message;
+    }
+
+    audioPlayer = {
+      stop() {
+        audio.pause();
+        stopTicker();
+        try { audio.currentTime = 0; } catch (e) { /* audio aún sin metadatos */ }
+        setPlayingUI(false);
+        setProgress(0);
+      }
+    };
+
+    return player;
+  }
+
+  function createWaveBars(active) {
+    const bars = document.createElement('div');
+    bars.className = 'clue-audio-bars' + (active ? ' clue-audio-bars--active' : '');
+
+    WAVE_HEIGHTS.forEach((height, index) => {
+      const bar = document.createElement('span');
+      bar.className = 'clue-audio-bar';
+      bar.style.setProperty('--h', `${height}%`);
+      bar.style.setProperty('--i', index);
+      bars.appendChild(bar);
+    });
+
+    return bars;
   }
 
   function init() {
@@ -640,9 +842,8 @@ window.addEventListener('storage', e => {
    RECOMPENSA FINAL
    ─────────────────────────────────────────────────────
    Al completar los 3 juegos, se revela la sección de
-   recompensa con una animación.
-   El contenido real se agrega dentro de #reward-content
-   en index.html (etapa 2).
+   recompensa con una animación y el botón para abrir
+   la playlist sorpresa en Spotify.
 ═══════════════════════════════════════════════════════ */
 function showReward() {
   const section = document.getElementById('reward-section');

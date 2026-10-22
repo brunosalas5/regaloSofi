@@ -3,7 +3,7 @@
  * ═════════════════════════════════════════════════════════════════════════════
  * Grilla clásica interactiva de 20 filas × 19 columnas para Sofi.
  * Contiene todas las palabras, pistas, respuestas verificadas,
- * textos de bienvenida, instrucciones y recompensa final.
+ * textos de bienvenida e instrucciones.
  * ═════════════════════════════════════════════════════════════════════════════
  */
 
@@ -41,24 +41,12 @@ const CRUCIGRAMA_CONFIG = {
       'Podés seleccionar una pista para encontrar rápidamente dónde escribir.',
       'Cuando hayas completado todas las palabras aparecerá el botón para comprobar el crucigrama.',
       'Si hay errores, las respuestas incorrectas se marcarán visualmente para que puedas corregirlas.',
-      'Cuando todas las palabras sean correctas, se desbloqueará la recompensa.'
+      'Cuando todas las palabras sean correctas, se mostrará la pantalla de victoria.'
     ],
     btnBack: '← VOLVER'
   },
 
-  // ── 4. RECOMPENSA Y VICTORIA ─────────────────────────────────
-  reward: {
-    btnLockedText: '🔒 RECOMPENSA BLOQUEADA',
-    btnUnlockedText: '🎁 ABRIR RECOMPENSA',
-    title: '🎉 ¡Felicitaciones, Sofi!',
-    subtitle: 'Descubriste todas las canciones y artistas de nuestro crucigrama.',
-    cardHeading: '🎁 Tu recompensa te está esperando...',
-    cardText: '¡Excelente oído musical, Sofi! Completaste cada palabra a la perfección, recordando nuestras canciones, los viajes en auto y las previas inolvidables.',
-    clueForAdventure: 'Tito dejó una nota musical: ¡El regalo está escondido al ritmo de sus canciones favoritas! 🎵✨',
-    btnReturnToAdventure: '← Volver a la aventura con el desafío completado'
-  },
-
-  // ── 5. PALABRAS Y PISTAS DEL CRUCIGRAMA ──────────────────────
+  // ── 4. PALABRAS Y PISTAS DEL CRUCIGRAMA ──────────────────────
   words: [
     // ── HORIZONTALES ──
     {

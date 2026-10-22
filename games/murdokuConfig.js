@@ -126,16 +126,5 @@ const MURDOKU_CONFIG = {
       'Cuando el tablero esté completo, se revelará el resultado de la investigación.'
     ],
     btnBack: '← VOLVER AL CASO'
-  },
-
-  // ── 8. RECOMPENSA Y DESBLOQUEO ────────────────────────────
-  reward: {
-    btnLockedText: '🔒 RECOMPENSA BLOQUEADA',
-    btnUnlockedText: '🎁 ABRIR RECOMPENSA',
-    title: '🎉 ¡Felicitaciones! Descubriste quién escondió el regalo.',
-    cardHeading: '🎁 Tu recompensa te está esperando...',
-    cardText: '¡Gran trabajo, detective! Has completado el primer desafío con éxito y desenmascaraste a Tito.',
-    clueForAdventure: 'Tito escondió el regalo de Sofi para hacerle una broma 😈🎁',
-    btnReturnToAdventure: '← Volver a la aventura con el caso resuelto'
   }
 };

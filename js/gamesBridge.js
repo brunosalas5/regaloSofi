@@ -3,8 +3,9 @@
  * ─────────────────────────────────────────────────────────────
  * Este archivo se incluye en CADA página de juego (games/*.html).
  *
- * Expone la función global completeGame(gameId) para que el
- * juego pueda informar a index.html que fue completado.
+ * Expone las funciones globales markGameCompleted(gameId) y
+ * completeGame(gameId) para que el juego pueda informar a index.html
+ * que fue completado.
  *
  * El mecanismo de comunicación utiliza localStorage como canal
  * compartido entre páginas del mismo origen.
@@ -14,28 +15,15 @@
 const STORAGE_KEY = 'sofi-regalo-state';
 
 /**
- * completeGame(gameId)
+ * markGameCompleted(gameId)
  *
- * Llama a esta función cuando el jugador gana el juego.
+ * Marca un juego como completado sin mostrar ningún overlay ni redirigir.
+ * Útil cuando la propia pantalla de victoria del juego se encarga de
+ * celebrar y de ofrecer el botón para volver al inicio.
  *
  * @param {string} gameId  –  'murdoku' | 'crucigrama' | 'tercerjuego'
- *
- * ¿Cómo llamarla desde el código del juego?
- *   completeGame('murdoku');   ← al detectar victoria
- *
- * Lo que hace internamente:
- *   1. Carga el estado guardado.
- *   2. Marca el juego como completado.
- *   3. Guarda el nuevo estado (lo detectará index.html via 'storage' event).
- *   4. Muestra un mensaje de éxito al jugador.
- *   5. (Opcional) Redirige automáticamente a index.html después de un delay.
  */
-// Asegurar que la aventura quede marcada como iniciada al estar en un juego
-try {
-  sessionStorage.setItem('sofi-adventure-started', 'true');
-} catch (e) { /* ignorar */ }
-
-function completeGame(gameId) {
+function markGameCompleted(gameId) {
   // 1. Cargar estado actual
   let state = { completed: { murdoku: false, crucigrama: false, tercerjuego: false } };
   try {
@@ -52,11 +40,34 @@ function completeGame(gameId) {
   try {
     sessionStorage.setItem('sofi-adventure-started', 'true');
   } catch (e) { /* ignorar */ }
+}
 
-  // 4. Mostrar feedback visual al jugador
+/**
+ * completeGame(gameId)
+ *
+ * Llama a esta función cuando el jugador gana el juego y querés mostrar
+ * el overlay de éxito con redirección automática.
+ *
+ * @param {string} gameId  –  'murdoku' | 'crucigrama' | 'tercerjuego'
+ *
+ * Lo que hace internamente:
+ *   1. Marca el juego como completado (markGameCompleted).
+ *   2. Muestra un mensaje de éxito al jugador.
+ *   3. Redirige automáticamente a index.html después de un delay.
+ */
+// Asegurar que la aventura quede marcada como iniciada al estar en un juego
+try {
+  sessionStorage.setItem('sofi-adventure-started', 'true');
+} catch (e) { /* ignorar */ }
+
+function completeGame(gameId) {
+  // 1. Marcar como completado
+  markGameCompleted(gameId);
+
+  // 2. Mostrar feedback visual al jugador
   showCompletionFeedback(gameId);
 
-  // 5. Redirigir a la página principal después de 2.5 segundos
+  // 3. Redirigir a la página principal después de 2.5 segundos
   setTimeout(() => {
     window.location.href = '../index.html?from=game';
   }, 2500);

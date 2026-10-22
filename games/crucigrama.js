@@ -101,7 +101,6 @@
     initScreens();
     renderGrid();
     renderClues();
-    initControls();
     initCanvasParticles();
     initConfettiCanvas();
 
@@ -117,9 +116,7 @@
     const btnCloseInstructionsX = document.getElementById('btn-close-instructions-x');
     const btnRulesQuick = document.getElementById('btn-rules-quick');
     const instructionsModal = document.getElementById('instructions-modal');
-    const rewardModal = document.getElementById('reward-modal');
-    const btnRewardUnlock = document.getElementById('btn-reward-unlock');
-    const btnReturnAdventure = document.getElementById('btn-return-adventure');
+    const btnReturnHome = document.getElementById('btn-return-home');
 
     const screenWelcome = document.getElementById('screen-welcome');
     const screenBoard = document.getElementById('screen-board');
@@ -148,21 +145,13 @@
     if (btnCloseInstructions) btnCloseInstructions.addEventListener('click', closeInstructions);
     if (btnCloseInstructionsX) btnCloseInstructionsX.addEventListener('click', closeInstructions);
 
-    // Botón para desbloquear y abrir la recompensa
-    if (btnRewardUnlock) {
-      btnRewardUnlock.addEventListener('click', () => {
-        if (rewardModal) rewardModal.classList.remove('hidden');
-      });
-    }
-
-    // Botón para regresar a la aventura con el juego completado
-    if (btnReturnAdventure) {
-      btnReturnAdventure.addEventListener('click', () => {
-        if (typeof completeGame === 'function') {
-          completeGame('crucigrama');
-        } else {
-          window.location.href = '../index.html?from=game';
+    // Botón para volver a la pantalla principal
+    if (btnReturnHome) {
+      btnReturnHome.addEventListener('click', () => {
+        if (typeof markGameCompleted === 'function') {
+          markGameCompleted('crucigrama');
         }
+        window.location.href = '../index.html?from=game';
       });
     }
 
@@ -735,6 +724,11 @@
   }
 
   function triggerVictory() {
+    // Marcar el desafío como completado apenas se resuelve, sin overlay
+    if (typeof markGameCompleted === 'function') {
+      markGameCompleted('crucigrama');
+    }
+
     playVictoryFanfare();
     startConfetti();
 

@@ -3,7 +3,7 @@
  * ═══════════════════════════════════════════════════════════════
  * Dependencias:
  *   - murdokuConfig.js (MURDOKU_CONFIG)
- *   - gamesBridge.js (STORAGE_KEY, completeGame)
+ *   - gamesBridge.js (inicio de la aventura compartida)
  * ═══════════════════════════════════════════════════════════════
  */
 
@@ -523,30 +523,6 @@
       imgEl.alt = culpritSuspect.name;
       if (fallbackEl) fallbackEl.style.display = 'none';
     }
-
-    // Preparar el botón de recompensa
-    const btnReward = document.getElementById('btn-reward-unlock');
-    if (btnReward) {
-      // Si el juego está resuelto, se desbloquea
-      btnReward.classList.remove('locked');
-      btnReward.classList.add('unlocked');
-      btnReward.innerHTML = `<span>🎁</span> <span>${MURDOKU_CONFIG.reward.btnUnlockedText}</span>`;
-      btnReward.onclick = openRewardModal;
-    }
-  }
-
-  // ── MODAL DE RECOMPENSA ─────────────────────────────────────
-  function openRewardModal() {
-    const modalEl = document.getElementById('reward-modal');
-    if (!modalEl) return;
-    modalEl.classList.remove('hidden');
-    playFanfareSound();
-    launchConfetti();
-  }
-
-  function closeRewardModal() {
-    const modalEl = document.getElementById('reward-modal');
-    if (modalEl) modalEl.classList.add('hidden');
   }
 
   // ── REINICIAR MOVIMIENTOS DEL JUGADOR ───────────────────────
@@ -728,20 +704,10 @@
       });
     });
 
-    // 5. Modal de Recompensa
-    const rewardModal = document.getElementById('reward-modal');
-    const btnCloseReward = document.getElementById('btn-close-reward');
-    const btnReturnAdventure = document.getElementById('btn-return-adventure');
-
-    if (btnCloseReward) btnCloseReward.addEventListener('click', closeRewardModal);
-    if (rewardModal) {
-      rewardModal.addEventListener('click', (e) => {
-        if (e.target === rewardModal) closeRewardModal();
-      });
-    }
-
-    if (btnReturnAdventure) {
-      btnReturnAdventure.addEventListener('click', () => {
+    // 5. Volver a la pantalla principal
+    const btnReturnHome = document.getElementById('btn-return-home');
+    if (btnReturnHome) {
+      btnReturnHome.addEventListener('click', () => {
         markMurdokuCompleted();
         window.location.href = '../index.html?from=game';
       });
