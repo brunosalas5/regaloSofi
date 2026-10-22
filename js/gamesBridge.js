@@ -70,7 +70,7 @@ function showCompletionFeedback(gameId) {
   const names = {
     murdoku:     'Murdoku',
     crucigrama:  'Crucigrama',
-    tercerjuego: 'Desafío 3',
+    tercerjuego: 'Wordle',
   };
 
   // Crear overlay de victoria

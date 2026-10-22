@@ -44,13 +44,13 @@ const GAMES_CONFIG = {
   },
   tercerjuego: {
     id:          'tercerjuego',
-    title:       '???',
-    icon:        '❓',
+    title:       'Wordle',
+    icon:        '🟩',
     number:      'Desafío 3',
-    description: 'El tercer misterio todavía no se revela... ¿te animás?',
-    href:        'games/tercer-juego.html',
-    // ── PISTA 3 ── Modificar este texto cuando esté lista:
-    clue:        'Aquí irá la pista del tercer juego... 🔐',
+    description: 'Cuatro intentos, nueve letras y una pista final. ¿Podés descubrir la palabra?',
+    href:        'games/wordle.html',
+    // ── PISTA 3 ── Desbloqueada al completar el Wordle:
+    clue:        'La palabra era CONCIERTO. Preparate para algo mejor que un concierto 🎟️✨',
   },
 };
 
@@ -732,6 +732,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // Nota: window.confirm() no funciona en file:// URLs en algunos navegadores,
       // por eso se reinicia directamente sin confirmación.
       localStorage.removeItem(STORAGE_KEY);
+      // Wordle guarda su progreso en una clave propia. Sin borrarla, al entrar
+      // el juego restauraría la partida anterior (incluso una ya ganada).
+      localStorage.removeItem('sofi-wordle-state');
       sessionStorage.removeItem('sofi-adventure-started');
       window.location.href = window.location.pathname;
     });

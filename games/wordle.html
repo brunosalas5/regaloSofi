@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Wordle Musical 🎵 – Desafío 3</title>
+  <meta name="description" content="Wordle musical personalizado para Sofi: nueve letras, cuatro oportunidades y una pista final." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Hojas de estilo del proyecto -->
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/game.css" />
+  <link rel="stylesheet" href="../css/wordle.css" />
+</head>
+<body class="game-page wordle-page">
+
+  <!-- Fondo decorativo -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <canvas id="wordle-confetti" aria-hidden="true"></canvas>
+  <div class="wordle-notes" aria-hidden="true">
+    <span class="wordle-note wn-1">♪</span>
+    <span class="wordle-note wn-2">♫</span>
+    <span class="wordle-note wn-3">♬</span>
+    <span class="wordle-note wn-4">♩</span>
+    <span class="wordle-note wn-5">✨</span>
+  </div>
+
+  <div class="game-wrapper wordle-wrapper">
+    <!-- ── NAVEGACIÓN SUPERIOR ── -->
+    <nav class="game-nav" aria-label="Navegación del juego">
+      <a href="../index.html?from=game" class="btn-back">← Volver a los desafíos</a>
+      <span class="game-nav-title">🟩 Desafío 3: Wordle</span>
+    </nav>
+
+    <main class="wordle-container">
+
+      <!-- ═══════════════════════════════════════════════════════
+           PANTALLA 1: BIENVENIDA
+      ═══════════════════════════════════════════════════════ -->
+      <section id="screen-home" class="wordle-screen wordle-home" aria-label="Pantalla de bienvenida">
+        <div class="wordle-badge">
+          <span>🎵</span>
+          <span>Desafío 3 • Edición Musical</span>
+        </div>
+
+        <h1 class="wordle-title">🎵 WORDLE</h1>
+        <p class="wordle-subtitle">El Wordle Musical de Sofi</p>
+
+        <!-- Mini tablero decorativo -->
+        <div class="wordle-mini-board" aria-hidden="true">
+          <span class="mini-tile correct">W</span>
+          <span class="mini-tile present">O</span>
+          <span class="mini-tile absent">R</span>
+          <span class="mini-tile correct">D</span>
+          <span class="mini-tile present">L</span>
+          <span class="mini-tile absent">E</span>
+        </div>
+
+        <div class="wordle-home-text">
+          <p>Una palabra.</p>
+          <p>Cuatro oportunidades.</p>
+          <p>Una pista final.</p>
+          <p class="wordle-highlight">¿Podés descubrirla?</p>
+        </div>
+
+        <div class="wordle-actions">
+          <button id="btn-start" class="btn-start-primary" type="button">
+            <span>🎵</span>
+            <span>COMENZAR</span>
+          </button>
+
+          <button id="btn-instructions" class="btn-instructions-secondary" type="button">
+            <span>📖</span>
+            <span>¿CÓMO SE JUEGA?</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           PANTALLA 2: PRESENTACIÓN
+      ═══════════════════════════════════════════════════════ -->
+      <section id="screen-intro" class="wordle-screen wordle-intro hidden" aria-label="Presentación del juego">
+        <div class="wordle-intro-card">
+          <div class="wordle-badge">
+            <span>🎶</span>
+            <span>ANTES DE EMPEZAR</span>
+          </div>
+
+          <h2 class="wordle-intro-title">🎶 UNA PALABRA TE ESTÁ ESPERANDO</h2>
+
+          <div class="wordle-intro-text">
+            <p>Este juego funciona como un Wordle, pero tiene algo diferente.</p>
+            <p>
+              Tenés solamente <strong>4 oportunidades</strong> para descubrir
+              una palabra de <strong>9 letras</strong>.
+            </p>
+            <p>Cada intento te va a dar pistas.</p>
+
+            <ul class="wordle-legend">
+              <li><span class="legend-tile absent" aria-hidden="true">A</span> Las letras grises no están.</li>
+              <li><span class="legend-tile present" aria-hidden="true">B</span> Las amarillas están, pero en otro lugar.</li>
+              <li><span class="legend-tile correct" aria-hidden="true">C</span> Las verdes están exactamente donde tienen que estar.</li>
+            </ul>
+
+            <p>Y cuando descubras la palabra...</p>
+            <p class="wordle-highlight">la palabra final será la pista. ❤️</p>
+            <p>Pensá bien cada intento.</p>
+            <p class="wordle-highlight">¿Listo para descubrirla?</p>
+          </div>
+
+          <div class="wordle-actions">
+            <button id="btn-intro-start" class="btn-start-primary" type="button">
+              <span>🎵</span>
+              <span>EMPEZAR</span>
+            </button>
+            <button id="btn-intro-back" class="btn-instructions-secondary" type="button">
+              <span>←</span>
+              <span>VOLVER</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           PANTALLA 3: JUEGO
+      ═══════════════════════════════════════════════════════ -->
+      <section id="screen-game" class="wordle-screen wordle-game hidden" aria-label="Tablero de Wordle">
+        <header class="wordle-game-header">
+          <h2 class="wordle-game-title">🎵 Wordle</h2>
+          <div class="wordle-game-meta">
+            <span id="wordle-attempts" class="wordle-pill">Intento 1 de 4</span>
+            <button id="btn-game-instructions" class="btn-game-rules" type="button">📖 Reglas</button>
+            <button id="btn-game-reset" class="btn-game-rules btn-game-reset" type="button" title="Reiniciar juego" aria-label="Reiniciar juego">🔄 <span class="reset-label">Reiniciar</span></button>
+          </div>
+        </header>
+
+        <div id="wordle-toast" class="wordle-toast" role="status" aria-live="polite"></div>
+
+        <div id="wordle-board" class="wordle-board" role="grid" aria-label="Tablero de Wordle, 4 filas de 9 letras">
+          <!-- Celdas inyectadas desde wordle.js -->
+        </div>
+
+        <p class="wordle-hint">
+          Escribí con tu teclado o tocá las letras de abajo.
+        </p>
+
+        <div id="wordle-keyboard" class="wordle-keyboard" role="group" aria-label="Teclado virtual">
+          <!-- Teclas inyectadas desde wordle.js -->
+        </div>
+
+        <!-- Input invisible para habilitar el teclado nativo en mobile -->
+        <input
+          id="wordle-native-input"
+          class="wordle-native-input"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="characters"
+          spellcheck="false"
+          aria-label="Escribir letras"
+        />
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           PANTALLA 4: VICTORIA
+      ═══════════════════════════════════════════════════════ -->
+      <section id="screen-victory" class="wordle-screen wordle-victory hidden" aria-label="Pantalla de victoria">
+        <article class="wordle-result-card">
+          <div class="wordle-result-badge">
+            <span>🎉</span>
+            <span>DESAFÍO COMPLETADO</span>
+          </div>
+
+          <h2 class="wordle-result-title">🎉 ¡LO ENCONTRASTE! 🎉</h2>
+
+          <p class="wordle-result-lead">La palabra final era:</p>
+          <div id="victory-word" class="wordle-result-word" aria-label="Palabra descubierta"></div>
+
+          <p id="victory-attempts" class="wordle-result-meta"></p>
+
+          <p class="wordle-result-follow">Pero esto recién empieza... ❤️</p>
+          <p class="wordle-result-detail">
+            Guardá esta palabra. No es solo una palabra: es la pista de lo que viene.
+          </p>
+
+          <button id="btn-open-reward" class="btn-reward-unlock" type="button">
+            <span>🎁</span>
+            <span>ABRIR RECOMPENSA</span>
+          </button>
+
+          <button id="btn-victory-reset" class="btn-instructions-secondary btn-victory-reset" type="button">
+            <span>🔄</span>
+            <span>JUGAR DE NUEVO</span>
+          </button>
+        </article>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════
+           PANTALLA 5: DERROTA
+      ═══════════════════════════════════════════════════════ -->
+      <section id="screen-gameover" class="wordle-screen wordle-gameover hidden" aria-label="Pantalla de derrota">
+        <article class="wordle-result-card wordle-loss-card">
+          <div class="wordle-result-badge wordle-loss-badge">
+            <span>🎧</span>
+            <span>SIN INTENTOS</span>
+          </div>
+
+          <h2 class="wordle-result-title">😅 SE AGOTARON LOS INTENTOS</h2>
+
+          <p class="wordle-result-detail">
+            No pasa nada. La pista sigue en juego... ¿querés volver a intentarlo? ❤️
+          </p>
+
+          <button id="btn-restart" class="btn-reward-unlock btn-restart" type="button">
+            <span>🔄</span>
+            <span>REINICIAR INTENTO</span>
+          </button>
+
+          <a href="../index.html?from=game" class="wordle-text-link">← Volver a los desafíos</a>
+        </article>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL: INSTRUCCIONES
+  ═══════════════════════════════════════════════════════ -->
+  <div id="instructions-modal" class="wordle-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="instructions-title">
+    <div class="wordle-modal-card">
+      <div class="wordle-modal-header">
+        <h3 id="instructions-title" class="wordle-modal-title">🎵 ¿CÓMO SE JUEGA?</h3>
+        <button id="btn-close-instructions-x" class="wordle-modal-close" type="button" aria-label="Cerrar instrucciones">✕</button>
+      </div>
+
+      <div class="wordle-instructions-body">
+        <p>Tenés <strong>4 oportunidades</strong> para descubrir una palabra de <strong>9 letras</strong>.</p>
+        <p>Escribí una palabra y presioná <strong>ENTER</strong>.</p>
+
+        <ul class="wordle-legend">
+          <li><span class="legend-tile correct" aria-hidden="true">V</span> <strong>VERDE:</strong> la letra está y está en el lugar correcto.</li>
+          <li><span class="legend-tile present" aria-hidden="true">A</span> <strong>AMARILLO:</strong> la letra está, pero en otro lugar.</li>
+          <li><span class="legend-tile absent" aria-hidden="true">G</span> <strong>GRIS:</strong> la letra no forma parte de la palabra.</li>
+        </ul>
+
+        <p>La palabra final será la pista.</p>
+        <p>Pensá bien cada intento. ❤️</p>
+      </div>
+
+      <button id="btn-close-instructions" class="btn-start-primary btn-modal-back" type="button">
+        ← VOLVER
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL: RECOMPENSA
+  ═══════════════════════════════════════════════════════ -->
+  <div id="reward-modal" class="wordle-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="reward-title">
+    <div class="wordle-modal-card wordle-reward-card">
+      <div class="wordle-reward-icon">🎁</div>
+      <h3 id="reward-title" class="wordle-modal-title">La palabra era la pista</h3>
+
+      <p class="wordle-reward-lead">
+        Descubriste la palabra que abre lo que viene:
+        <strong id="reward-word" class="wordle-reward-word"></strong>
+      </p>
+
+      <p class="wordle-reward-text">
+        Guardala bien, porque no es solo una palabra: es la pista de tu recompensa final.
+      </p>
+
+      <div class="wordle-reward-clue">
+        <strong>Pista desbloqueada:</strong>
+        <span id="reward-clue"></span>
+      </div>
+
+      <button id="btn-return-adventure" class="btn-return-adventure" type="button">
+        ← Volver a la aventura con el desafío completado
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL: CONFIRMAR REINICIO
+  ═══════════════════════════════════════════════════════ -->
+  <div id="reset-modal" class="wordle-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="reset-title">
+    <div class="wordle-modal-card wordle-reset-card">
+      <h3 id="reset-title" class="wordle-modal-title">🔄 ¿Reiniciar el intento?</h3>
+      <p class="wordle-reset-text">
+        Se va a borrar el progreso de este juego y vas a empezar de cero. ¿Querés continuar?
+      </p>
+      <div class="wordle-reset-actions">
+        <button id="btn-reset-cancel" class="btn-instructions-secondary" type="button">Cancelar</button>
+        <button id="btn-reset-confirm" class="btn-start-primary btn-reset-confirm" type="button">Sí, reiniciar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts del juego -->
+  <script src="../js/gamesBridge.js"></script>
+  <script src="wordleConfig.js"></script>
+  <script src="wordleLogic.js"></script>
+  <script src="wordle.js"></script>
+</body>
+</html>
